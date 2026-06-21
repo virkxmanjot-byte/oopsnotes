@@ -1,0 +1,2616 @@
+bash
+
+cat > /mnt/user-data/outputs/quick_revision_notes.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOPS Using C++ – Quick Revision Notes</title>
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --nav: #1a1f5e;
+    --accent: #3b5bdb;
+    --accent2: #5c7cfa;
+    --text: #1a1d2e;
+    --muted: #5a6280;
+    --border: #dde3f5;
+    --code-bg: #1e2130;
+    --code-text: #a9dcff;
+    --tag: #e8edff;
+    --tag-text: #3b5bdb;
+    --keyword: #ffd43b;
+    --tip: #e6fcf5;
+    --tip-border: #20c997;
+    --warn: #fff3bf;
+    --warn-border: #f59f00;
+    --shadow: 0 2px 12px rgba(59,91,219,0.08);
+    --radius: 10px;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1120;
+    --card: #1a1f3a;
+    --nav: #0d1033;
+    --accent: #5c7cfa;
+    --accent2: #748ffc;
+    --text: #dce4ff;
+    --muted: #8ba0cc;
+    --border: #2a3060;
+    --code-bg: #0b0f1e;
+    --code-text: #93c5fd;
+    --tag: #1e2a5c;
+    --tag-text: #748ffc;
+    --keyword: #ffd43b;
+    --tip: #0f2a22;
+    --tip-border: #20c997;
+    --warn: #2a2000;
+    --warn-border: #f59f00;
+    --shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; transition: background 0.3s, color 0.3s; }
+  
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: var(--nav); color: #fff; padding: 0 20px; display: flex; align-items: center; gap: 12px; height: 56px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .nav-brand { font-size: 1.1rem; font-weight: 700; color: #fff; white-space: nowrap; }
+  .nav-brand span { color: #ffd43b; }
+  .search-wrap { flex: 1; position: relative; max-width: 400px; }
+  #searchInput { width: 100%; padding: 8px 14px 8px 36px; border-radius: 20px; border: none; background: rgba(255,255,255,0.12); color: #fff; font-size: 0.9rem; outline: none; transition: background 0.2s; }
+  #searchInput::placeholder { color: rgba(255,255,255,0.5); }
+  #searchInput:focus { background: rgba(255,255,255,0.2); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+  .dark-toggle { background: rgba(255,255,255,0.12); border: none; color: #fff; padding: 7px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; white-space: nowrap; transition: background 0.2s; }
+  .dark-toggle:hover { background: rgba(255,255,255,0.22); }
+  
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #1a1f5e 0%, #3b5bdb 100%); color: #fff; text-align: center; padding: 48px 20px 36px; }
+  .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+  .hero h1 span { color: #ffd43b; }
+  .hero p { font-size: 1.05rem; opacity: 0.85; max-width: 600px; margin: 0 auto 20px; }
+  .hero-stats { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: #ffd43b; }
+  .stat-label { font-size: 0.8rem; opacity: 0.75; }
+  
+  /* TOC */
+  .toc-container { max-width: 1100px; margin: 28px auto 0; padding: 0 16px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .toc-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; text-decoration: none; color: var(--accent); font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow); }
+  .toc-card:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: translateY(-2px); }
+  .toc-card .num { background: var(--tag); color: var(--tag-text); padding: 2px 7px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; }
+  .toc-card:hover .num { background: rgba(255,255,255,0.2); color: #fff; }
+  
+  /* MAIN */
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+  .section-header { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin: 36px 0 16px; }
+  
+  /* CARDS */
+  .lecture-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.2s; }
+  .lecture-card:hover { box-shadow: 0 4px 24px rgba(59,91,219,0.13); }
+  .card-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; user-select: none; }
+  .card-num { background: var(--accent); color: #fff; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; flex-shrink: 0; }
+  .card-title-wrap { flex: 1; }
+  .card-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .tag { background: var(--tag); color: var(--tag-text); padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
+  .card-chevron { font-size: 0.85rem; color: var(--muted); transition: transform 0.25s; flex-shrink: 0; }
+  .card-header.open .card-chevron { transform: rotate(180deg); }
+  .card-body { padding: 0 20px 20px; border-top: 1px solid var(--border); display: none; }
+  .card-body.open { display: block; }
+  
+  /* CONTENT */
+  h3 { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin: 18px 0 8px; display: flex; align-items: center; gap: 6px; }
+  h3::before { content: ''; display: inline-block; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  li { margin: 4px 0; font-size: 0.9rem; }
+  p { font-size: 0.9rem; margin: 6px 0; }
+  .def { background: var(--tip); border-left: 3px solid var(--tip-border); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 0.88rem; }
+  .warn-box { background: var(--warn); border-left: 3px solid var(--warn-border); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 0.88rem; }
+  .quick { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .quick-item { background: var(--tag); color: var(--tag-text); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+  pre { background: var(--code-bg); color: var(--code-text); padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 0.82rem; line-height: 1.6; margin: 10px 0; font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace; }
+  .output { background: #0d1117; color: #56d364; padding: 8px 14px; border-radius: 0 0 8px 8px; font-family: monospace; font-size: 0.82rem; margin-top: -10px; border-top: 1px dashed #30363d; }
+  .output::before { content: '▶ Output: '; color: #8b949e; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem; }
+  th { background: var(--accent); color: #fff; padding: 8px 12px; text-align: left; }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: var(--tag); }
+  .rev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 8px 0; }
+  .rev-item { background: var(--tag); border-radius: 8px; padding: 10px 12px; font-size: 0.83rem; }
+  .rev-item strong { color: var(--accent); display: block; margin-bottom: 3px; font-size: 0.8rem; }
+  
+  /* MASTER SECTIONS */
+  .master-card { background: linear-gradient(135deg, var(--card) 0%, var(--tag) 100%); border: 2px solid var(--accent); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+  .master-card h2 { font-size: 1.3rem; font-weight: 800; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .master-card h2 .icon { font-size: 1.5rem; }
+  .cheat-table { font-size: 0.82rem; }
+  
+  /* SEARCH HIGHLIGHT */
+  .highlight { background: #ffd43b; color: #000; border-radius: 3px; padding: 0 2px; }
+  .no-result { text-align: center; padding: 40px; color: var(--muted); font-size: 1.1rem; }
+  
+  /* BACK TO TOP */
+  .back-top { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 12px rgba(59,91,219,0.4); display: none; align-items: center; justify-content: center; transition: background 0.2s; z-index: 99; }
+  .back-top:hover { background: var(--accent2); }
+  .back-top.show { display: flex; }
+  
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.5rem; }
+    .nav-brand { font-size: 0.9rem; }
+    .hero-stats { gap: 16px; }
+    .toc-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    pre { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">OOPS <span>C++</span> Notes</div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search topics, keywords..." oninput="searchNotes(this.value)">
+  </div>
+  <button class="dark-toggle" onclick="toggleDark()">🌙 Dark</button>
+</nav>
+
+<div class="hero">
+  <h1>OOPS Using C++ – <span>Quick Revision</span> Notes</h1>
+  <p>Complete study notes from all lectures. Covers every topic from OOP fundamentals to advanced C++ features.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Lectures Covered</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Code Examples</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Exam-Ready</div></div>
+  </div>
+</div>
+
+<div class="toc-container">
+  <div class="toc-grid">
+    <a class="toc-card" href="#lec1"><span class="num">L1</span>OOP Intro & Classes</a>
+    <a class="toc-card" href="#lec2"><span class="num">L2</span>Abstraction & Encapsulation</a>
+    <a class="toc-card" href="#lec3"><span class="num">L3</span>Inheritance & Polymorphism</a>
+    <a class="toc-card" href="#lec4"><span class="num">L4</span>Classes & Access Specifiers</a>
+    <a class="toc-card" href="#lec5"><span class="num">L5</span>Data & Member Functions</a>
+    <a class="toc-card" href="#lec6"><span class="num">L6</span>Function & Friend Functions</a>
+    <a class="toc-card" href="#lec8"><span class="num">L8</span>Static Members</a>
+    <a class="toc-card" href="#lec9"><span class="num">L9</span>Type Conversion</a>
+    <a class="toc-card" href="#lec10"><span class="num">L10</span>Constants & Volatile</a>
+    <a class="toc-card" href="#lec11"><span class="num">L11</span>Nested & Local Classes</a>
+    <a class="toc-card" href="#lec12"><span class="num">L12</span>Constructors</a>
+    <a class="toc-card" href="#lec13"><span class="num">L13</span>Parameterized Constructor</a>
+    <a class="toc-card" href="#lec14"><span class="num">L14</span>Copy Constructor</a>
+    <a class="toc-card" href="#lec15"><span class="num">L15</span>Destructor</a>
+    <a class="toc-card" href="#lec16"><span class="num">L16</span>Operator Overloading</a>
+    <a class="toc-card" href="#lec17"><span class="num">L17</span>Overloading via Friend</a>
+    <a class="toc-card" href="#lec18"><span class="num">L18</span>Nested/Local Class (II)</a>
+    <a class="toc-card" href="#lec19"><span class="num">L19</span>Type Conversion (II)</a>
+    <a class="toc-card" href="#lec20"><span class="num">L20</span>Explicit Constructor</a>
+    <a class="toc-card" href="#lec21"><span class="num">L21</span>Const Objects</a>
+    <a class="toc-card" href="#lec22"><span class="num">L22</span>Inheritance Types</a>
+    <a class="toc-card" href="#lec23"><span class="num">L23</span>Public & Private Inherit.</a>
+    <a class="toc-card" href="#lec24"><span class="num">L24</span>Protected Inheritance</a>
+    <a class="toc-card" href="#lec27"><span class="num">L27</span>Virtual Functions</a>
+    <a class="toc-card" href="#lec28"><span class="num">L28</span>Virtual Functions (II)</a>
+    <a class="toc-card" href="#lec29"><span class="num">L29</span>Pure Virtual & Abstract</a>
+    <a class="toc-card" href="#lec32"><span class="num">L32</span>Templates (I)</a>
+    <a class="toc-card" href="#lec33"><span class="num">L33</span>Exception Handling</a>
+    <a class="toc-card" href="#lec34"><span class="num">L34</span>Exception Specification</a>
+    <a class="toc-card" href="#lec35"><span class="num">L35</span>Templates, Down/Cross Cast</a>
+    <a class="toc-card" href="#lec36"><span class="num">L36</span>Streams & Formatted I/O</a>
+    <a class="toc-card" href="#lec38"><span class="num">L38</span>Object Serialization</a>
+    <a class="toc-card" href="#lec39"><span class="num">L39</span>Random Access Files</a>
+    <a class="toc-card" href="#lec40"><span class="num">L40</span>C++ Libraries & STL</a>
+    <a class="toc-card" href="#master"><span class="num">★</span>Master Revision Sheet</a>
+    <a class="toc-card" href="#lastmin"><span class="num">⚡</span>Last-Minute Notes</a>
+    <a class="toc-card" href="#cheat"><span class="num">📋</span>Cheat Sheet</a>
+  </div>
+</div>
+
+<main id="mainContent">
+<div class="section-header">📚 Lecture-by-Lecture Notes</div>
+
+<!-- ===== LECTURE 1 ===== -->
+<div class="lecture-card" id="lec1">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">1</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Introduction to OOP – Classes and Objects</div>
+      <div class="card-tags"><span class="tag">OOP Basics</span><span class="tag">Class</span><span class="tag">Object</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Key Definitions</h3>
+    <div class="def"><strong>OOP (Object-Oriented Programming):</strong> A programming paradigm that organizes software design around data (objects) rather than functions and logic.</div>
+    <div class="def"><strong>Class:</strong> A user-defined blueprint/template from which objects are created. No memory is allocated when a class is defined.</div>
+    <div class="def"><strong>Object:</strong> An instance of a class. Memory is allocated when an object is created. An object has State, Behavior, and Identity.</div>
+
+    <h3>Core OOP Concepts (Pillars)</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>Encapsulation</strong>Wrapping data + functions in one unit (class).</div>
+      <div class="rev-item"><strong>Abstraction</strong>Hiding complex details; showing only essential features.</div>
+      <div class="rev-item"><strong>Inheritance</strong>Child class acquires properties of parent class.</div>
+      <div class="rev-item"><strong>Polymorphism</strong>One name, many forms. Same function behaves differently.</div>
+    </div>
+
+    <h3>3 Properties of Every Object</h3>
+    <ul>
+      <li><strong>State</strong> – Represented by attributes (data members). E.g., colour, name, balance.</li>
+      <li><strong>Behavior</strong> – Represented by methods (member functions). E.g., deposit(), display().</li>
+      <li><strong>Identity</strong> – Unique name that distinguishes the object.</li>
+    </ul>
+
+    <h3>Why OOP?</h3>
+    <ul>
+      <li>Faster development and easier debugging</li>
+      <li>Promotes code reuse (DRY – Don't Repeat Yourself)</li>
+      <li>Clear structure using classes and objects</li>
+      <li>Easier to maintain and modify large programs</li>
+    </ul>
+
+    <h3>Basic Class Syntax</h3>
+<pre>class ClassName {
+  // Data members (variables)
+  // Member functions (methods)
+public:
+  dataType variable;
+  void functionName() { }
+};</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">OOP = Data-centric programming</span>
+      <span class="quick-item">Class = Blueprint</span>
+      <span class="quick-item">Object = Instance of class</span>
+      <span class="quick-item">4 Pillars: Encapsulation, Abstraction, Inheritance, Polymorphism</span>
+    </div>
+
+    <h3>Summary</h3>
+    <p>OOP organizes code around objects which have state and behavior. A class is a blueprint; creating an object allocates memory. The 4 pillars of OOP form the foundation of all C++ object-oriented design.</p>
+  </div>
+</div>
+
+<!-- ===== LECTURE 2 ===== -->
+<div class="lecture-card" id="lec2">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">2</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Methods, Message Passing, Abstraction & Encapsulation</div>
+      <div class="card-tags"><span class="tag">Abstraction</span><span class="tag">Encapsulation</span><span class="tag">Methods</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Methods in OOP</h3>
+    <div class="def"><strong>Methods</strong> are functions that belong to a class. They can be defined inside or outside the class definition. Accessed using the dot (.) operator on an object.</div>
+
+    <h3>Message Passing</h3>
+    <div class="def"><strong>Message Passing:</strong> When one object calls a method on another object to request it to perform an action. This is the mechanism of object communication in OOP.</div>
+    <p>Example: <code>f1.turnOn();</code> — object f1 receives a message to execute turnOn().</p>
+
+    <h3>Abstraction</h3>
+    <div class="def"><strong>Abstraction:</strong> Showing only essential features while hiding internal complexity. Users interact with what is important, not how it works internally.</div>
+    <ul>
+      <li>You drive a car without knowing the engine internals</li>
+      <li>You use a smartphone without knowing circuit boards</li>
+      <li>In C++: achieved using classes, abstract classes, and interfaces</li>
+      <li>Operates at <em>design level</em></li>
+    </ul>
+
+    <h3>Encapsulation</h3>
+    <div class="def"><strong>Encapsulation:</strong> Wrapping data members and member functions into a single unit (class). Prevents direct access to data. Achieved using private data + public getter/setter methods.</div>
+    <ul>
+      <li>Acts as a protective shield around data</li>
+      <li>Operates at <em>implementation level</em></li>
+      <li>Example: Bank account balance should only change via deposit()/withdraw()</li>
+    </ul>
+
+    <h3>Abstraction vs. Encapsulation</h3>
+    <table>
+      <tr><th>Feature</th><th>Abstraction</th><th>Encapsulation</th></tr>
+      <tr><td>Purpose</td><td>Hide complexity</td><td>Protect data</td></tr>
+      <tr><td>Focus</td><td>Behavior / Interface</td><td>Data safety</td></tr>
+      <tr><td>Level</td><td>Design level</td><td>Implementation level</td></tr>
+      <tr><td>Goal</td><td>Simplicity</td><td>Security</td></tr>
+      <tr><td>Example</td><td>ATM interface</td><td>Private bank balance</td></tr>
+      <tr><td>Achieved by</td><td>Abstract classes & interfaces</td><td>Access modifiers (private)</td></tr>
+    </table>
+
+    <h3>Code Example</h3>
+<pre>class Student {
+public:
+    string name;
+    int age;
+    void display() {
+        cout &lt;&lt; "Name: " &lt;&lt; name &lt;&lt; endl;
+        cout &lt;&lt; "Age: " &lt;&lt; age &lt;&lt; endl;
+    }
+};
+int main() {
+    Student s1;
+    s1.name = "Rahul";
+    s1.age = 20;
+    s1.display();
+    return 0;
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Abstraction = What to show</span>
+      <span class="quick-item">Encapsulation = How to protect</span>
+      <span class="quick-item">Methods define behavior</span>
+      <span class="quick-item">Message passing = object.method()</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 3 ===== -->
+<div class="lecture-card" id="lec3">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">3</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Introduction to Inheritance, Abstract Classes & Polymorphism</div>
+      <div class="card-tags"><span class="tag">Inheritance</span><span class="tag">Polymorphism</span><span class="tag">Abstract Class</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Inheritance</h3>
+    <div class="def"><strong>Inheritance:</strong> An OOP concept where a child class (subclass/derived) acquires properties and behaviors of a parent class (superclass/base class).</div>
+    <p><strong>Why use Inheritance?</strong></p>
+    <ul>
+      <li><strong>Code Reusability</strong> – Avoid rewriting the same code</li>
+      <li><strong>Extensibility</strong> – Add features without modifying existing classes</li>
+      <li><strong>Organized Code</strong> – Hierarchical relationships</li>
+      <li><strong>Polymorphism Support</strong> – Enables function overriding</li>
+    </ul>
+    <h3>Basic Inheritance Syntax</h3>
+<pre>class Base {
+    // Data and functions
+};
+class Derived : access_specifier Base {
+    // Additional data and functions
+};</pre>
+
+    <h3>Types of Inheritance</h3>
+    <table>
+      <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+      <tr><td>Single</td><td>1 Base → 1 Derived</td><td>Animal → Dog</td></tr>
+      <tr><td>Multiple</td><td>Many Bases → 1 Derived</td><td>Bird + Fish → FlyingFish</td></tr>
+      <tr><td>Multilevel</td><td>Chain of inheritance</td><td>Vehicle → Car → SportsCar</td></tr>
+      <tr><td>Hierarchical</td><td>1 Base → Many Derived</td><td>Shape → Circle, Square</td></tr>
+      <tr><td>Hybrid</td><td>Mix of multiple + multilevel</td><td>Person → Student, Employee → WorkingStudent</td></tr>
+    </table>
+
+    <h3>Polymorphism</h3>
+    <div class="def"><strong>Polymorphism:</strong> Derived from Greek – "poly" (many) + "morph" (forms). The same function name performs different actions based on context/object.</div>
+    <table>
+      <tr><th>Type</th><th>How Achieved</th><th>Decision Time</th></tr>
+      <tr><td>Compile-Time (Static)</td><td>Function overloading, Operator overloading</td><td>Compile time</td></tr>
+      <tr><td>Run-Time (Dynamic)</td><td>Virtual functions + Inheritance</td><td>Run time</td></tr>
+    </table>
+
+    <h3>Abstract Class</h3>
+    <div class="def"><strong>Abstract Class:</strong> A class that cannot be instantiated directly. It contains at least one pure virtual function (= 0).</div>
+<pre>class Animal {
+public:
+    virtual void sound() = 0;  // Pure virtual function
+};
+class Dog : public Animal {
+public:
+    void sound() { cout &lt;&lt; "Bark!"; }
+};
+int main() {
+    Dog d;
+    d.sound();  // Output: Bark!
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Inheritance = code reuse via parent-child</span>
+      <span class="quick-item">Abstract class cannot be instantiated</span>
+      <span class="quick-item">Pure virtual = virtual fn() = 0</span>
+      <span class="quick-item">Compile-time poly = overloading; Runtime poly = virtual functions</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 4 ===== -->
+<div class="lecture-card" id="lec4">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">4</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Introduction to C++ – Classes & Access Specifiers</div>
+      <div class="card-tags"><span class="tag">C++ Basics</span><span class="tag">Access Specifiers</span><span class="tag">Class Syntax</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>First C++ Program</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Hello, World!";
+    return 0;
+}</pre>
+
+    <h3>Class Definition</h3>
+    <div class="def"><strong>Class:</strong> A user-defined data type that groups data members (variables) and member functions (methods) into a single logical unit. Serves as a blueprint from which objects are created.</div>
+    <p><strong>Class Components:</strong></p>
+    <ul>
+      <li><strong>Data Members:</strong> Variables that store information (state of object)</li>
+      <li><strong>Member Functions:</strong> Functions that define behavior of objects</li>
+    </ul>
+
+    <h3>Access Specifiers</h3>
+    <table>
+      <tr><th>Specifier</th><th>Within Class</th><th>Derived Class</th><th>Outside Class</th></tr>
+      <tr><td><strong>public</strong></td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td><strong>protected</strong></td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td><strong>private</strong></td><td>✅</td><td>❌</td><td>❌</td></tr>
+    </table>
+
+    <h3>Class Syntax Example</h3>
+<pre>class Employee {
+    // Private data members
+    string employeeName;
+    double salary;
+public:
+    int employeeId;  // Public
+    void setSalary(double s) { salary = s; }
+    void displayEmployeeDetails() {
+        cout &lt;&lt; "ID: " &lt;&lt; employeeId &lt;&lt; endl;
+        cout &lt;&lt; "Name: " &lt;&lt; employeeName &lt;&lt; endl;
+        cout &lt;&lt; "Salary: " &lt;&lt; salary &lt;&lt; endl;
+    }
+};
+int main() {
+    Employee emp;
+    emp.employeeId = 101;
+    emp.setSalary(45000);
+    emp.displayEmployeeDetails();
+}</pre>
+
+    <h3>Memory Allocation Rule</h3>
+    <div class="warn-box">⚠️ Memory is allocated when an object is created (NOT when the class is defined).</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">private = only inside class</span>
+      <span class="quick-item">protected = class + derived</span>
+      <span class="quick-item">public = everywhere</span>
+      <span class="quick-item">Class = blueprint; Object = instance</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 5 ===== -->
+<div class="lecture-card" id="lec5">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">5</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Function & Data Members – Default Arguments</div>
+      <div class="card-tags"><span class="tag">Data Members</span><span class="tag">Functions</span><span class="tag">Default Arguments</span><span class="tag">Static</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Data Members</h3>
+    <div class="def"><strong>Data Members:</strong> Variables declared inside a class that represent the state/properties of an object. They hold information about the object.</div>
+    <p><strong>Types:</strong></p>
+    <ul>
+      <li><strong>Instance (Non-static):</strong> Each object gets its own copy. Belongs to the object.</li>
+      <li><strong>Static:</strong> Shared by all objects. Only one copy in memory. Accessed as ClassName::variable.</li>
+    </ul>
+
+    <h3>Static vs Instance Data Members</h3>
+    <table>
+      <tr><th>Feature</th><th>Static</th><th>Instance</th></tr>
+      <tr><td>Belongs to</td><td>Class</td><td>Object</td></tr>
+      <tr><td>Copies in memory</td><td>One (shared)</td><td>One per object</td></tr>
+      <tr><td>Accessed via</td><td>ClassName::var</td><td>object.var</td></tr>
+      <tr><td>Default value</td><td>0 (defined outside)</td><td>Uninitialized</td></tr>
+    </table>
+
+    <h3>Member Functions</h3>
+    <div class="def"><strong>Member Functions:</strong> Functions inside a class that define behavior of the object. Think: Data members = What object HAS; Member functions = What object DOES.</div>
+
+    <h3>Default Arguments</h3>
+    <div class="def"><strong>Default Arguments:</strong> Values automatically used when the caller does not provide them. Must be rightmost parameters.</div>
+<pre>void f(int a = 10) {
+    cout &lt;&lt; a &lt;&lt; endl;
+}
+int main() {
+    f();     // Output: 10
+    f(221);  // Output: 221
+}</pre>
+
+    <h3>Static Member Example</h3>
+<pre>class Student {
+public:
+    static int totalStudents;
+    Student() { totalStudents++; }
+};
+int Student::totalStudents = 0;  // Defined outside class
+
+int main() {
+    Student s1, s2, s3;
+    cout &lt;&lt; "Total: " &lt;&lt; Student::totalStudents; // Output: 3
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Static members shared by all objects</span>
+      <span class="quick-item">Static defined outside class: Type ClassName::var = value</span>
+      <span class="quick-item">Default args must be rightmost params</span>
+      <span class="quick-item">Data members = state; Member functions = behavior</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 6 ===== -->
+<div class="lecture-card" id="lec6">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">6</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Function Overloading & Friend Functions</div>
+      <div class="card-tags"><span class="tag">Function Overloading</span><span class="tag">Friend Function</span><span class="tag">Compile-time Polymorphism</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Function Overloading</h3>
+    <div class="def"><strong>Function Overloading:</strong> Defining multiple functions with the same name but different parameter lists (different number, type, or order of parameters). It is a form of compile-time polymorphism.</div>
+    <p><strong>Rules:</strong></p>
+    <ul>
+      <li>Functions must differ in type, number, or order of parameters</li>
+      <li>Return type alone cannot differentiate overloaded functions</li>
+      <li>Compiler selects the right function at compile time</li>
+    </ul>
+
+    <h3>Function Overloading Example</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Addition {
+public:
+    int add(int a, int b) { return a + b; }
+    float add(float a, float b) { return a + b; }
+    int add(int a, int b, int c) { return a + b + c; }
+};
+int main() {
+    Addition obj;
+    cout &lt;&lt; obj.add(5, 3) &lt;&lt; endl;        // int: 8
+    cout &lt;&lt; obj.add(2.5f, 3.5f) &lt;&lt; endl;  // float: 6.0
+    cout &lt;&lt; obj.add(1, 2, 3) &lt;&lt; endl;     // int: 6
+}</pre>
+
+    <h3>Friend Functions</h3>
+    <div class="def"><strong>Friend Function:</strong> A function that is NOT a member of the class but is granted access to private and protected members of the class. Declared using the keyword <code>friend</code> inside the class.</div>
+    <p><strong>Key Points:</strong></p>
+    <ul>
+      <li>Declared inside the class with <code>friend</code> keyword</li>
+      <li>Defined outside the class WITHOUT class name or scope resolution (::)</li>
+      <li>Can access private members directly</li>
+      <li>NOT a member function – called without an object</li>
+      <li>Not inherited</li>
+    </ul>
+
+    <h3>Friend Function Example</h3>
+<pre>class Box {
+    int width;
+public:
+    Box(int w) : width(w) {}
+    friend void printWidth(Box b);  // Friend declaration
+};
+void printWidth(Box b) {  // Friend definition (no class name)
+    cout &lt;&lt; "Width: " &lt;&lt; b.width;  // Can access private member
+}
+int main() {
+    Box b(10);
+    printWidth(b);  // Output: Width: 10
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Overloading = same name, diff params</span>
+      <span class="quick-item">Friend = non-member with private access</span>
+      <span class="quick-item">Friend not inherited</span>
+      <span class="quick-item">Overloading is compile-time polymorphism</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 8 ===== -->
+<div class="lecture-card" id="lec8">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">8</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Static Members of a Class</div>
+      <div class="card-tags"><span class="tag">Static Members</span><span class="tag">Static Functions</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Static Data Members</h3>
+    <div class="def"><strong>Static Data Member:</strong> A class-level variable shared by all objects. Only one copy exists in memory regardless of how many objects are created.</div>
+    <ul>
+      <li>Declared with <code>static</code> keyword inside class</li>
+      <li>Must be defined and initialized <em>outside</em> the class</li>
+      <li>Accessed as <code>ClassName::staticVar</code></li>
+      <li>Common use: counting objects, shared configuration</li>
+    </ul>
+
+    <h3>Static Member Functions</h3>
+    <div class="def"><strong>Static Member Function:</strong> A function that belongs to the class (not to any object). Can only access static data members and other static functions. Called using ClassName::function().</div>
+    <ul>
+      <li>Cannot use <code>this</code> pointer</li>
+      <li>Cannot access non-static data members</li>
+      <li>Useful for utility functions that don't need object state</li>
+    </ul>
+
+    <h3>Example</h3>
+<pre>class Counter {
+    static int count;
+public:
+    Counter() { count++; }
+    static int getCount() { return count; }  // Static function
+};
+int Counter::count = 0;  // Definition outside class
+
+int main() {
+    Counter c1, c2, c3;
+    cout &lt;&lt; Counter::getCount();  // Output: 3
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">static = class-level, not object-level</span>
+      <span class="quick-item">Static fn can't use 'this'</span>
+      <span class="quick-item">Static defined outside: int ClassName::var = val</span>
+      <span class="quick-item">Call: ClassName::staticFn()</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 9 ===== -->
+<div class="lecture-card" id="lec9">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">9</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Type Conversion in C++</div>
+      <div class="card-tags"><span class="tag">Type Conversion</span><span class="tag">Casting</span><span class="tag">static_cast</span><span class="tag">dynamic_cast</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Types of Conversion</h3>
+    <table>
+      <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+      <tr><td>Implicit (Automatic)</td><td>Compiler converts automatically</td><td>int → double</td></tr>
+      <tr><td>Explicit (Casting)</td><td>Programmer forces conversion</td><td>(int)x or static_cast&lt;int&gt;(x)</td></tr>
+    </table>
+    <p><strong>Widening Conversion:</strong> Safe – smaller to larger type (int → double)</p>
+    <p><strong>Narrowing Conversion:</strong> Risky – larger to smaller type (double → int) → data loss!</p>
+
+    <h3>C++ Cast Operators</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>static_cast</strong>Most common safe cast. Numeric conversions, upcasting. Checked at compile time.</div>
+      <div class="rev-item"><strong>dynamic_cast</strong>Runtime safe cast. Used in polymorphism. Needs virtual functions. Returns nullptr if fails.</div>
+      <div class="rev-item"><strong>const_cast</strong>Adds or removes const qualifier. Modifying originally const causes undefined behavior.</div>
+      <div class="rev-item"><strong>reinterpret_cast</strong>Low-level bit-level cast. Converts unrelated pointer types. Dangerous – use only in systems programming.</div>
+    </div>
+
+    <h3>static_cast Example</h3>
+<pre>double x = 8.9;
+int y = static_cast&lt;int&gt;(x);  // y = 8 (truncated)
+cout &lt;&lt; y;  // Output: 8
+
+// Fix integer division:
+int a = 5, b = 2;
+double result = static_cast&lt;double&gt;(a) / b;  // 2.5</pre>
+
+    <h3>dynamic_cast Example</h3>
+<pre>class Base { public: virtual void show() {} };
+class Derived : public Base { public: void display() { cout &lt;&lt; "Derived"; } };
+
+Base* b = new Derived();
+Derived* d = dynamic_cast&lt;Derived*&gt;(b);
+if (d != nullptr) {
+    d-&gt;display();  // Output: Derived
+}</pre>
+
+    <h3>User-Defined Conversion</h3>
+    <ul>
+      <li><strong>Conversion Constructor:</strong> Single-parameter constructor allows implicit type conversion</li>
+      <li><strong>Conversion Operator:</strong> <code>operator int()</code> converts class object to int</li>
+      <li><strong>explicit keyword:</strong> Prevents unwanted implicit conversions</li>
+    </ul>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">double→int = narrowing = data loss</span>
+      <span class="quick-item">static_cast = compile-time safe cast</span>
+      <span class="quick-item">dynamic_cast = runtime safe (needs virtual)</span>
+      <span class="quick-item">reinterpret_cast = dangerous low-level</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 10 ===== -->
+<div class="lecture-card" id="lec10">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">10</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Constant & Volatile Objects</div>
+      <div class="card-tags"><span class="tag">const</span><span class="tag">volatile</span><span class="tag">Constant Objects</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Constant Objects</h3>
+    <div class="def"><strong>Constant Object:</strong> An object declared with the <code>const</code> keyword. Its data members cannot be modified after creation.</div>
+    <ul>
+      <li>Declared as: <code>const ClassName obj;</code></li>
+      <li>Can only call <code>const</code> member functions</li>
+      <li>Provides data safety and program reliability</li>
+      <li>Useful for bank account details, configuration values</li>
+    </ul>
+
+    <h3>Constant Member Functions</h3>
+    <div class="def"><strong>Const Member Function:</strong> A function that promises not to modify any data member of the class. Declared with <code>const</code> after the parameter list.</div>
+<pre>class Test {
+public:
+    void show() const {  // Const member function
+        cout &lt;&lt; "This is a constant function";
+    }
+};
+int main() {
+    const Test t1;
+    t1.show();  // Allowed: const obj calling const function
+}</pre>
+
+    <h3>Rules: Const Object + Const Function</h3>
+    <ul>
+      <li>A <code>const</code> object can ONLY call <code>const</code> member functions</li>
+      <li>A <code>const</code> function cannot modify data members</li>
+      <li>A regular object can call both const and non-const functions</li>
+    </ul>
+
+    <h3>Volatile Objects</h3>
+    <div class="def"><strong>volatile:</strong> Tells the compiler the variable can change at any time from outside the program (hardware, OS). Prevents compiler from optimizing/caching that variable.</div>
+    <ul>
+      <li>Used in embedded systems and hardware programming</li>
+      <li>Syntax: <code>volatile int x;</code></li>
+    </ul>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">const object → only const functions</span>
+      <span class="quick-item">const fn can't modify data</span>
+      <span class="quick-item">volatile = value may change externally</span>
+      <span class="quick-item">const fn syntax: void fn() const { }</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 11 ===== -->
+<div class="lecture-card" id="lec11">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">11</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Nested Classes & Local Classes</div>
+      <div class="card-tags"><span class="tag">Nested Class</span><span class="tag">Local Class</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Nested Class</h3>
+    <div class="def"><strong>Nested Class:</strong> A class defined inside another class. The inner class is a member of the outer class.</div>
+    <ul>
+      <li>Inner class can access static members and types of outer class</li>
+      <li>Inner class object created separately: <code>Outer::Inner obj;</code></li>
+      <li>Used to logically group related classes (e.g., Node inside LinkedList)</li>
+    </ul>
+<pre>class Outer {
+public:
+    class Inner {        // Nested class
+    public:
+        void show() { cout &lt;&lt; "Inner class"; }
+    };
+};
+int main() {
+    Outer::Inner obj;   // Creating inner class object
+    obj.show();
+}</pre>
+
+    <h3>Local Class</h3>
+    <div class="def"><strong>Local Class:</strong> A class defined inside a function. Its scope is limited to that function only.</div>
+    <ul>
+      <li>Cannot use non-static local variables of the enclosing function</li>
+      <li>Can use static variables of the enclosing function</li>
+      <li>All member functions must be defined inside the local class</li>
+      <li>Cannot have static data members</li>
+    </ul>
+<pre>void myFunction() {
+    class Local {    // Local class
+    public:
+        void display() { cout &lt;&lt; "Local class"; }
+    };
+    Local obj;
+    obj.display();
+}</pre>
+
+    <h3>Key Differences</h3>
+    <table>
+      <tr><th>Feature</th><th>Nested Class</th><th>Local Class</th></tr>
+      <tr><td>Defined inside</td><td>Another class</td><td>A function</td></tr>
+      <tr><td>Scope</td><td>Outer class scope</td><td>Function scope only</td></tr>
+      <tr><td>Access</td><td>Outer::Inner</td><td>Only inside function</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== LECTURE 12 ===== -->
+<div class="lecture-card" id="lec12">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">12</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Constructors – Default Constructor</div>
+      <div class="card-tags"><span class="tag">Constructor</span><span class="tag">Default Constructor</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Constructor</h3>
+    <div class="def"><strong>Constructor:</strong> A special member function that is automatically called when an object is created. It has the same name as the class and NO return type (not even void).</div>
+    <p><strong>Properties:</strong></p>
+    <ul>
+      <li>Same name as class</li>
+      <li>No return type</li>
+      <li>Called automatically on object creation</li>
+      <li>Used to initialize data members</li>
+      <li>Can be overloaded</li>
+    </ul>
+
+    <h3>Types of Constructors</h3>
+    <table>
+      <tr><th>Type</th><th>Parameters</th><th>Description</th></tr>
+      <tr><td>Default Constructor</td><td>None</td><td>Called with no arguments; compiler provides if not defined</td></tr>
+      <tr><td>Parameterized Constructor</td><td>Yes</td><td>Initializes objects with specific values</td></tr>
+      <tr><td>Copy Constructor</td><td>Reference to same class</td><td>Creates new object as copy of existing object</td></tr>
+    </table>
+
+    <h3>Default Constructor Example</h3>
+<pre>class Student {
+    int rollNo;
+    string name;
+public:
+    Student() {             // Default constructor
+        rollNo = 0;
+        name = "Unknown";
+    }
+    void display() {
+        cout &lt;&lt; rollNo &lt;&lt; " " &lt;&lt; name;
+    }
+};
+int main() {
+    Student s1;  // Default constructor called automatically
+    s1.display();  // Output: 0 Unknown
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Constructor = same name as class</span>
+      <span class="quick-item">No return type</span>
+      <span class="quick-item">Auto-called on object creation</span>
+      <span class="quick-item">Default constructor = no parameters</span>
+      <span class="quick-item">Compiler provides default if not defined</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 13 ===== -->
+<div class="lecture-card" id="lec13">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">13</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Parameterized Constructor & Dynamic Memory Allocation</div>
+      <div class="card-tags"><span class="tag">Parameterized Constructor</span><span class="tag">new operator</span><span class="tag">Dynamic Memory</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Parameterized Constructor</h3>
+    <div class="def"><strong>Parameterized Constructor:</strong> A constructor that accepts arguments/parameters. Used to initialize objects with different values at the time of object creation.</div>
+<pre>class Student {
+    int marks;
+public:
+    Student(int m) {   // Parameterized constructor
+        marks = m;
+    }
+    void display() { cout &lt;&lt; "Marks: " &lt;&lt; marks; }
+};
+int main() {
+    Student s1(90);  // Object created with value 90
+    s1.display();    // Output: Marks: 90
+}</pre>
+
+    <h3>Constructor with Dynamic Memory Allocation</h3>
+    <div class="def">When the amount of memory required is not known at compile time, a constructor can allocate memory dynamically using the <code>new</code> operator.</div>
+<pre>class Array {
+    int *ptr;
+    int size;
+public:
+    Array(int s) {
+        size = s;
+        ptr = new int[size];  // Dynamic allocation in constructor
+        cout &lt;&lt; "Memory allocated for " &lt;&lt; size &lt;&lt; " elements";
+    }
+    ~Array() {
+        delete[] ptr;  // Always free in destructor
+    }
+};</pre>
+
+    <div class="warn-box">⚠️ Always pair <code>new</code> with <code>delete</code> (in destructor) to prevent memory leaks!</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Parameterized constructor accepts args</span>
+      <span class="quick-item">new = heap allocation; delete = free</span>
+      <span class="quick-item">new[] for arrays; delete[] for array cleanup</span>
+      <span class="quick-item">Dynamic allocation done when size unknown at compile time</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 14 ===== -->
+<div class="lecture-card" id="lec14">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">14</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Copy Constructor</div>
+      <div class="card-tags"><span class="tag">Copy Constructor</span><span class="tag">Deep Copy</span><span class="tag">Shallow Copy</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Copy Constructor</h3>
+    <div class="def"><strong>Copy Constructor:</strong> A special constructor that creates a new object as a copy of an existing object. Takes a reference to an object of the same class as parameter.</div>
+    <p><strong>Syntax:</strong> <code>ClassName(const ClassName &amp;obj) { }</code></p>
+
+    <h3>When is Copy Constructor Called?</h3>
+    <ul>
+      <li>When an object is initialized from another: <code>Student s2 = s1;</code></li>
+      <li>When an object is passed by value to a function</li>
+      <li>When a function returns an object by value</li>
+    </ul>
+
+    <h3>Shallow Copy vs Deep Copy</h3>
+    <table>
+      <tr><th>Aspect</th><th>Shallow Copy</th><th>Deep Copy</th></tr>
+      <tr><td>How</td><td>Compiler-provided default</td><td>User-defined copy constructor</td></tr>
+      <tr><td>Pointers</td><td>Both objects point to SAME memory</td><td>Each object has its own memory</td></tr>
+      <tr><td>Risk</td><td>Dangling pointer problem</td><td>Safe – independent copies</td></tr>
+      <tr><td>When needed</td><td>No dynamic memory</td><td>Class has pointer/dynamic members</td></tr>
+    </table>
+
+    <h3>Copy Constructor Example</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Student {
+    string name;
+    int marks;
+public:
+    Student(string n, int m) : name(n), marks(m) {}
+    // Copy constructor
+    Student(const Student &amp;s) {
+        name = s.name;
+        marks = s.marks;
+        cout &lt;&lt; "Copy constructor called";
+    }
+    void display() { cout &lt;&lt; name &lt;&lt; " " &lt;&lt; marks; }
+};
+int main() {
+    Student s1("Rahul", 90);
+    Student s2 = s1;   // Copy constructor called
+    s2.display();
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Copy constructor syntax: ClassName(const ClassName &amp;obj)</span>
+      <span class="quick-item">Shallow copy = same pointer (dangerous)</span>
+      <span class="quick-item">Deep copy = new independent memory</span>
+      <span class="quick-item">Must define if class has dynamic/pointer members</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 15 ===== -->
+<div class="lecture-card" id="lec15">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">15</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Destructor</div>
+      <div class="card-tags"><span class="tag">Destructor</span><span class="tag">Memory Management</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Destructor</h3>
+    <div class="def"><strong>Destructor:</strong> A special member function automatically called when an object goes out of scope or is deleted. Used to release resources (memory, file handles, etc.).</div>
+    <p><strong>Syntax:</strong> <code>~ClassName() { }</code></p>
+
+    <h3>Key Properties</h3>
+    <ul>
+      <li>Same name as class with a tilde (~) prefix</li>
+      <li>No return type, no parameters</li>
+      <li>Cannot be overloaded (only one destructor)</li>
+      <li>Called automatically when object goes out of scope</li>
+      <li>Called in reverse order of construction</li>
+    </ul>
+
+    <h3>Destructor Example</h3>
+<pre>class Array {
+    int *ptr;
+public:
+    Array(int size) {
+        ptr = new int[size];
+        cout &lt;&lt; "Constructor: Memory allocated";
+    }
+    ~Array() {         // Destructor
+        delete[] ptr;  // Free dynamic memory
+        cout &lt;&lt; "Destructor: Memory freed";
+    }
+};
+int main() {
+    Array a(5);
+}  // Destructor called automatically here</pre>
+
+    <div class="warn-box">⚠️ If you use <code>new</code> in the constructor, always use <code>delete</code> in the destructor to prevent memory leaks!</div>
+
+    <h3>Virtual Destructor</h3>
+    <div class="def">When using polymorphism (base class pointer to derived object), declare the destructor as <code>virtual</code> to ensure the correct derived class destructor is called.</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Destructor = ~ClassName()</span>
+      <span class="quick-item">Auto-called when object goes out of scope</span>
+      <span class="quick-item">Cannot be overloaded</span>
+      <span class="quick-item">Use virtual destructor in polymorphism</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 16 ===== -->
+<div class="lecture-card" id="lec16">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">16</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Operator Overloading</div>
+      <div class="card-tags"><span class="tag">Operator Overloading</span><span class="tag">Compile-time Polymorphism</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Operator Overloading</h3>
+    <div class="def"><strong>Operator Overloading:</strong> A form of compile-time polymorphism that allows existing C++ operators (+, -, *, &lt;&lt;, &gt;&gt; etc.) to be used with user-defined types (class objects).</div>
+    <p><strong>Syntax:</strong></p>
+<pre>return_type operator symbol (parameter_list) {
+    // body
+}</pre>
+
+    <h3>Operators That CANNOT Be Overloaded</h3>
+    <div class="warn-box">❌ Cannot overload: <code>::</code> (scope resolution), <code>.</code> (member access), <code>.*</code> (pointer to member), <code>?:</code> (ternary), <code>sizeof</code></div>
+
+    <h3>Example: Overloading + Operator</h3>
+<pre>class Complex {
+    float real, imag;
+public:
+    Complex(float r = 0, float i = 0) : real(r), imag(i) {}
+    Complex operator+(Complex c) {   // Overload +
+        return Complex(real + c.real, imag + c.imag);
+    }
+    void display() { cout &lt;&lt; real &lt;&lt; "+" &lt;&lt; imag &lt;&lt; "i"; }
+};
+int main() {
+    Complex c1(3, 4), c2(1, 2);
+    Complex c3 = c1 + c2;  // Calls operator+
+    c3.display();  // Output: 4+6i
+}</pre>
+
+    <h3>Unary Operator Overloading (++)</h3>
+<pre>class Counter {
+    int count;
+public:
+    Counter(int c) : count(c) {}
+    Counter operator++() {   // Pre-increment
+        ++count;
+        return *this;
+    }
+    void display() { cout &lt;&lt; count; }
+};
+int main() {
+    Counter c(5);
+    ++c;
+    c.display();  // Output: 6
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Operator overloading = compile-time polymorphism</span>
+      <span class="quick-item">. :: .* sizeof ?:  cannot be overloaded</span>
+      <span class="quick-item">Syntax: return_type operator+(param) { }</span>
+      <span class="quick-item">Can be member function or friend function</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 17 ===== -->
+<div class="lecture-card" id="lec17">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">17</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Operator Overloading via Friend Function</div>
+      <div class="card-tags"><span class="tag">Friend Overloading</span><span class="tag">Symmetric Operators</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Why Use Friend for Operator Overloading?</h3>
+    <div class="def">When using a member function for operator overloading, the left operand must be an object of the class. A <strong>friend function</strong> removes this restriction and allows both operands to be of different types or in any order.</div>
+
+    <h3>Friend Function Operator Overloading Example</h3>
+<pre>class Complex {
+    float real, imag;
+public:
+    Complex(float r = 0, float i = 0) : real(r), imag(i) {}
+    friend Complex operator+(Complex c1, Complex c2);  // Friend declaration
+    void display() { cout &lt;&lt; real &lt;&lt; "+" &lt;&lt; imag &lt;&lt; "i"; }
+};
+Complex operator+(Complex c1, Complex c2) {  // Friend definition
+    return Complex(c1.real + c2.real, c1.imag + c2.imag);
+}
+int main() {
+    Complex c1(2, 3), c2(4, 5);
+    Complex c3 = c1 + c2;
+    c3.display();  // Output: 6+8i
+}</pre>
+
+    <h3>Member vs Friend for Operator Overloading</h3>
+    <table>
+      <tr><th>Aspect</th><th>Member Function</th><th>Friend Function</th></tr>
+      <tr><td>Left operand</td><td>Must be class object</td><td>Can be any type</td></tr>
+      <tr><td>Parameters</td><td>n-1 params for n-ary op</td><td>n params for n-ary op</td></tr>
+      <tr><td>Access</td><td>Has direct access</td><td>Accesses via friend</td></tr>
+      <tr><td>Symmetric ops (+, ==)</td><td>Asymmetric behavior</td><td>Recommended (symmetric)</td></tr>
+    </table>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Friend op takes 2 params for binary op</span>
+      <span class="quick-item">Friend preferred for symmetric operators (+, -, ==)</span>
+      <span class="quick-item">&lt;&lt; and &gt;&gt; MUST be overloaded via friend</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 18 ===== -->
+<div class="lecture-card" id="lec18">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">18</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Nested & Local Classes (Advanced)</div>
+      <div class="card-tags"><span class="tag">Nested Class</span><span class="tag">Local Class</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Advanced Nested Class Concepts</h3>
+    <ul>
+      <li>A nested class can be declared in any access section (public/private/protected)</li>
+      <li>Private nested class: Only accessible inside the outer class</li>
+      <li>Public nested class: Accessible via <code>Outer::Inner</code></li>
+      <li>Nested class does NOT automatically get access to outer class members</li>
+      <li>Nested class needs an outer class object to access non-static outer members</li>
+    </ul>
+
+    <h3>Use Cases</h3>
+    <ul>
+      <li>Node class inside LinkedList</li>
+      <li>Iterator class inside Container</li>
+      <li>Helper classes that are tightly coupled</li>
+    </ul>
+
+    <h3>Summary: Nested vs Local</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>Nested Class</strong>Defined inside another class. Accessible as Outer::Inner. Logically groups related classes.</div>
+      <div class="rev-item"><strong>Local Class</strong>Defined inside a function. Scope limited to that function. Cannot have static data members or access local variables of function.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 19 ===== -->
+<div class="lecture-card" id="lec19">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">19</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Type Conversion (Advanced) – Implicit & Explicit</div>
+      <div class="card-tags"><span class="tag">Type Conversion</span><span class="tag">Widening</span><span class="tag">Narrowing</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Implicit vs Explicit Conversion</h3>
+    <div class="def"><strong>Implicit Conversion:</strong> Compiler automatically converts one type to another. Safe for widening conversions (int→double) but risky for narrowing (double→int).</div>
+    <div class="def"><strong>Explicit Conversion (Casting):</strong> Programmer forces conversion using cast operators. Gives full control and improves readability.</div>
+
+    <h3>Common Pitfall</h3>
+<pre>int totalMarks = 85;
+int subjects = 2;
+double average = totalMarks / subjects;  // ❌ Wrong! = 42.0 (int division)
+// Fix:
+double average = static_cast&lt;double&gt;(totalMarks) / subjects;  // ✅ = 42.5</pre>
+
+    <h3>Conversion Constructor</h3>
+<pre>class Number {
+    int value;
+public:
+    Number(int x) { value = x; }  // Conversion constructor
+    void show() { cout &lt;&lt; value; }
+};
+int main() {
+    Number obj = 10;  // Implicit: int → Number via constructor
+    obj.show();       // Output: 10
+}</pre>
+
+    <h3>Conversion Operator</h3>
+<pre>class Number {
+    int value;
+public:
+    Number(int x) : value(x) {}
+    operator int() { return value; }  // Conversion operator
+};
+int main() {
+    Number obj(50);
+    int x = obj;  // Number → int via conversion operator
+    cout &lt;&lt; x;    // Output: 50
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">int/int = integer division (no decimal)</span>
+      <span class="quick-item">Use static_cast to fix integer division</span>
+      <span class="quick-item">Conversion constructor: single param constructor</span>
+      <span class="quick-item">Conversion operator: operator type() { return val; }</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 20 ===== -->
+<div class="lecture-card" id="lec20">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">20</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Explicit Constructor & Namespaces</div>
+      <div class="card-tags"><span class="tag">explicit</span><span class="tag">Namespace</span><span class="tag">std</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Explicit Constructor</h3>
+    <div class="def"><strong>Explicit Constructor:</strong> A constructor declared with the <code>explicit</code> keyword that prevents implicit type conversion. Forces the programmer to use direct initialization.</div>
+
+    <h3>Why Use explicit?</h3>
+    <ul>
+      <li>Prevents unintended object creation from wrong types</li>
+      <li>Improves type safety and program reliability</li>
+      <li>Recommended for single-parameter constructors</li>
+      <li>Used in safety-critical systems and large software projects</li>
+    </ul>
+
+    <h3>Example</h3>
+<pre>// Without explicit - allows dangerous implicit conversion:
+class Test {
+public:
+    Test(int x) {}  // Implicit conversion possible
+};
+Test t = 10;  // ✅ Works (implicit: int → Test)
+
+// With explicit - safe:
+class Safe {
+public:
+    explicit Safe(int x) {}  // Prevents implicit conversion
+};
+Safe s(10);   // ✅ Valid (direct initialization)
+Safe s = 10;  // ❌ Error! Not allowed with explicit</pre>
+
+    <h3>Namespaces</h3>
+    <div class="def"><strong>Namespace:</strong> A named region that groups related identifiers to avoid naming conflicts. C++ Standard Library uses the <code>std</code> namespace.</div>
+<pre>#include &lt;iostream&gt;
+int main() {
+    std::cout &lt;&lt; "Hello";  // Using scope resolution
+    return 0;
+}
+// OR:
+using namespace std;  // Import entire std namespace
+cout &lt;&lt; "Hello";  // Now no need for std::</pre>
+    <div class="warn-box">⚠️ Avoid <code>using namespace std;</code> in large programs to prevent naming conflicts. Use <code>std::</code> prefix instead.</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">explicit prevents implicit conversion</span>
+      <span class="quick-item">Must be recommended for single-param constructors</span>
+      <span class="quick-item">std:: avoids namespace conflicts</span>
+      <span class="quick-item">using namespace std = imports all std names</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 21 ===== -->
+<div class="lecture-card" id="lec21">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">21</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Constant Objects & Constant Member Functions</div>
+      <div class="card-tags"><span class="tag">const Object</span><span class="tag">const Function</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Concept Review</h3>
+    <div class="def"><strong>Constant Object:</strong> Declared with <code>const</code>. Its data cannot be modified. Can only call const member functions.</div>
+<pre>class Number {
+    int value;
+public:
+    void setValue(int v) { value = v; }
+    void display() const { cout &lt;&lt; "Value = " &lt;&lt; value; }
+};
+int main() {
+    Number n1;
+    n1.setValue(10);  // OK: n1 is normal object
+    n1.display();     // OK
+    const Number n2;       // Constant object
+    // n2.setValue(20);    // ❌ Error: modifies data
+    // n2.display();       // ✅ Only if data is initialized
+}</pre>
+
+    <h3>Rules Summary</h3>
+    <table>
+      <tr><th>Situation</th><th>Allowed?</th></tr>
+      <tr><td>const object calls const function</td><td>✅ Yes</td></tr>
+      <tr><td>const object calls non-const function</td><td>❌ No</td></tr>
+      <tr><td>Normal object calls const function</td><td>✅ Yes</td></tr>
+      <tr><td>Normal object calls non-const function</td><td>✅ Yes</td></tr>
+      <tr><td>const function modifies data member</td><td>❌ No</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== LECTURE 22 ===== -->
+<div class="lecture-card" id="lec22">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">22</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Inheritance in C++ – All Types</div>
+      <div class="card-tags"><span class="tag">Single Inheritance</span><span class="tag">Multiple</span><span class="tag">Multilevel</span><span class="tag">Hierarchical</span><span class="tag">Hybrid</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Syntax of Inheritance</h3>
+<pre>class DerivedClass : access_specifier BaseClass {
+    // body
+};</pre>
+
+    <h3>Single Inheritance</h3>
+    <p>One base class → one derived class. Simplest form.</p>
+<pre>class Animal { public: void eat() { cout &lt;&lt; "Eating"; } };
+class Dog : public Animal { public: void bark() { cout &lt;&lt; "Woof"; } };
+int main() {
+    Dog d;
+    d.eat();   // Inherited
+    d.bark();  // Own
+}</pre>
+
+    <h3>Multiple Inheritance</h3>
+    <p>One derived class inherits from multiple base classes. Bases separated by comma.</p>
+<pre>class A { public: void showA() { cout &lt;&lt; "A"; } };
+class B { public: void showB() { cout &lt;&lt; "B"; } };
+class C : public A, public B { };
+int main() {
+    C obj;
+    obj.showA();  // From A
+    obj.showB();  // From B
+}</pre>
+
+    <h3>Multilevel Inheritance</h3>
+    <p>A → B → C (chain). Derived class becomes base for another class.</p>
+<pre>class Vehicle { };
+class Car : public Vehicle { };
+class SportsCar : public Car { };  // Multilevel</pre>
+
+    <h3>Hierarchical Inheritance</h3>
+    <p>One base → multiple derived classes.</p>
+<pre>class Shape { };
+class Circle : public Shape { };
+class Rectangle : public Shape { };
+class Triangle : public Shape { };</pre>
+
+    <h3>Hybrid Inheritance</h3>
+    <p>Combination of two or more types of inheritance. Often combines hierarchical + multiple.</p>
+    <div class="warn-box">⚠️ Hybrid inheritance can lead to the <strong>Diamond Problem</strong>. Use <strong>virtual inheritance</strong> to solve it.</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Single: 1 base → 1 derived</span>
+      <span class="quick-item">Multiple: many base → 1 derived</span>
+      <span class="quick-item">Multilevel: A→B→C chain</span>
+      <span class="quick-item">Hierarchical: 1 base → many derived</span>
+      <span class="quick-item">Hybrid: mix of types</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 23 ===== -->
+<div class="lecture-card" id="lec23">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">23</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Public & Private Inheritance in C++</div>
+      <div class="card-tags"><span class="tag">Public Inheritance</span><span class="tag">Private Inheritance</span><span class="tag">IS-A</span><span class="tag">HAS-A</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Access Specifiers in Inheritance</h3>
+    <table>
+      <tr><th>Base Member</th><th>public Inheritance</th><th>private Inheritance</th><th>protected Inheritance</th></tr>
+      <tr><td>public</td><td>public</td><td>private</td><td>protected</td></tr>
+      <tr><td>protected</td><td>protected</td><td>private</td><td>protected</td></tr>
+      <tr><td>private</td><td>❌ Not inherited</td><td>❌ Not inherited</td><td>❌ Not inherited</td></tr>
+    </table>
+
+    <h3>Public Inheritance ("IS-A" Relationship)</h3>
+    <div class="def">Public members of base remain public in derived. Protected remain protected. Represents an IS-A relationship (e.g., Dog IS-A Animal).</div>
+<pre>class Base { public: int x; void display() { cout &lt;&lt; x; } };
+class Derived : public Base {
+public:
+    void setValue(int val) { x = val; }  // Can access base's public x
+};
+int main() {
+    Derived obj;
+    obj.setValue(10);
+    obj.display();   // ✅ Works: public stays public
+    // obj.x = 20;  // ✅ Also works
+}</pre>
+
+    <h3>Private Inheritance ("HAS-A" / "Implemented-in-terms-of")</h3>
+    <div class="def">ALL public and protected members of base become PRIVATE in derived. Cannot be accessed from outside the derived class. Represents a HAS-A relationship.</div>
+<pre>class Derived : private Base {
+public:
+    void setValue(int val) { x = val; }  // ✅ Accessible inside derived
+    void show() { display(); }           // ✅ Accessible inside derived
+};
+int main() {
+    Derived obj;
+    obj.setValue(20);
+    obj.show();
+    // obj.display(); // ❌ Error! Private inheritance hides it
+}</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">public inheritance = IS-A (most common)</span>
+      <span class="quick-item">private inheritance = HAS-A (implementation detail)</span>
+      <span class="quick-item">private base members NEVER inherited in any form</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 24 ===== -->
+<div class="lecture-card" id="lec24">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">24</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Protected Inheritance & Derivations</div>
+      <div class="card-tags"><span class="tag">Protected Inheritance</span><span class="tag">Access Control</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Protected Inheritance</h3>
+    <div class="def"><strong>Protected Inheritance:</strong> Public and protected members of the base class become <em>protected</em> in the derived class. They are accessible in the derived class and its children, but NOT outside.</div>
+    <ul>
+      <li>Rarely used in practice</li>
+      <li>Acts as a middle ground between public and private inheritance</li>
+      <li>Useful when you want derived class to further pass inherited members to its own children</li>
+    </ul>
+
+    <h3>Protected Member</h3>
+    <div class="def"><strong>Protected Member:</strong> A class member that is accessible within the class itself and within all derived classes, but NOT accessible from outside through an object.</div>
+<pre>class Base {
+protected:
+    int protectedVar;  // Accessible in derived classes
+public:
+    int publicVar;
+};
+class Derived : public Base {
+public:
+    void show() {
+        protectedVar = 10;  // ✅ Accessible
+        publicVar = 20;     // ✅ Accessible
+    }
+};
+int main() {
+    Derived d;
+    d.publicVar = 5;      // ✅ Public member accessible
+    // d.protectedVar = 5; // ❌ Not accessible outside class
+}</pre>
+
+    <h3>Complete Summary Table</h3>
+    <table>
+      <tr><th>Specifier</th><th>In class</th><th>Derived class</th><th>Outside</th></tr>
+      <tr><td>public</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>protected</td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td>private</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== LECTURE 27 ===== -->
+<div class="lecture-card" id="lec27">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">27</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Virtual Functions & Runtime Polymorphism</div>
+      <div class="card-tags"><span class="tag">Virtual Function</span><span class="tag">Runtime Polymorphism</span><span class="tag">Late Binding</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Virtual Function</h3>
+    <div class="def"><strong>Virtual Function:</strong> A member function declared with the <code>virtual</code> keyword in a base class. When accessed through a base class pointer pointing to a derived class object, the derived class version is called (late binding).</div>
+
+    <h3>Why Virtual Functions?</h3>
+    <ul>
+      <li>Enables Runtime Polymorphism (late binding / dynamic dispatch)</li>
+      <li>Allows base class pointers to call derived class methods</li>
+      <li>Forms the basis of OOP design patterns</li>
+    </ul>
+
+    <h3>Virtual Function Example</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Base {
+public:
+    virtual void display() {  // Virtual function
+        cout &lt;&lt; "Base class function";
+    }
+};
+class Derived : public Base {
+public:
+    void display() override {  // Override base class function
+        cout &lt;&lt; "Derived class function";
+    }
+};
+int main() {
+    Base* basePtr;
+    Derived derivedObj;
+    basePtr = &amp;derivedObj;
+    basePtr-&gt;display();  // Calls Derived's display (runtime decision)
+    // Output: Derived class function
+}</pre>
+
+    <h3>Without Virtual (Early Binding)</h3>
+<pre>// Without virtual keyword:
+Base* b = new Derived();
+b->display();  // Calls BASE display (wrong!)
+
+// With virtual keyword:
+b->display();  // Calls DERIVED display (correct!)</pre>
+
+    <h3>VTable (Virtual Table)</h3>
+    <div class="def">The compiler maintains a <strong>VTable</strong> (virtual function pointer table) for each class with virtual functions. When a virtual function is called via a pointer, the program looks up the VTable at runtime to find the correct function.</div>
+
+    <h3>override keyword</h3>
+    <div class="def"><code>override</code> keyword tells the compiler to check that the function actually overrides a base class virtual function. Prevents typos from silently breaking polymorphism.</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">virtual = runtime binding (late binding)</span>
+      <span class="quick-item">Use override to confirm overriding</span>
+      <span class="quick-item">VTable used for dynamic dispatch</span>
+      <span class="quick-item">Base* ptr = new Derived() → virtual needed for correct behavior</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 28 ===== -->
+<div class="lecture-card" id="lec28">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">28</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Virtual Functions (Advanced)</div>
+      <div class="card-tags"><span class="tag">Virtual Destructor</span><span class="tag">VTable</span><span class="tag">Function Overriding</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Function Overriding vs Overloading</h3>
+    <table>
+      <tr><th>Feature</th><th>Function Overloading</th><th>Function Overriding</th></tr>
+      <tr><td>Where</td><td>Same class</td><td>Base + Derived class</td></tr>
+      <tr><td>Parameters</td><td>Must differ</td><td>Must be identical</td></tr>
+      <tr><td>Polymorphism</td><td>Compile-time</td><td>Runtime</td></tr>
+      <tr><td>Keyword</td><td>None needed</td><td>virtual + override</td></tr>
+    </table>
+
+    <h3>Virtual Destructor</h3>
+    <div class="def">When deleting a derived class object through a base class pointer, declare the destructor as <code>virtual</code> to ensure the derived class destructor is called properly.</div>
+<pre>class Base {
+public:
+    virtual ~Base() { cout &lt;&lt; "Base destructor"; }  // Virtual destructor
+};
+class Derived : public Base {
+public:
+    ~Derived() { cout &lt;&lt; "Derived destructor"; }
+};
+int main() {
+    Base* b = new Derived();
+    delete b;  // Without virtual: only Base destructor called (MEMORY LEAK!)
+               // With virtual: Derived destructor → Base destructor (CORRECT)
+}</pre>
+
+    <div class="warn-box">⚠️ Always declare destructor as virtual when using polymorphism to prevent memory leaks!</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Always use virtual destructor in base class</span>
+      <span class="quick-item">Overriding = same signature in derived</span>
+      <span class="quick-item">Overloading = different params in same class</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 29 ===== -->
+<div class="lecture-card" id="lec29">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">29</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Pure Virtual Functions & Abstract Classes</div>
+      <div class="card-tags"><span class="tag">Pure Virtual</span><span class="tag">Abstract Class</span><span class="tag">Interface</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Pure Virtual Function</h3>
+    <div class="def"><strong>Pure Virtual Function:</strong> A virtual function with no implementation in the base class, declared with <code>= 0</code>. Forces every derived class to provide its own implementation.</div>
+    <p><strong>Syntax:</strong> <code>virtual return_type function_name() = 0;</code></p>
+
+    <h3>Abstract Class</h3>
+    <div class="def"><strong>Abstract Class:</strong> A class containing at least one pure virtual function. Cannot be instantiated directly. Acts as an interface/blueprint for derived classes.</div>
+    <p><strong>Features:</strong></p>
+    <ul>
+      <li>Cannot create objects of abstract class</li>
+      <li>Used to provide common interface for derived classes</li>
+      <li>Supports abstraction and runtime polymorphism</li>
+      <li>Derived class MUST implement all pure virtual functions</li>
+    </ul>
+
+    <h3>Example</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Shape {                             // Abstract class
+public:
+    virtual void draw() = 0;             // Pure virtual function
+    virtual ~Shape() {}                  // Virtual destructor
+};
+class Circle : public Shape {
+public:
+    void draw() { cout &lt;&lt; "Drawing Circle"; }
+};
+class Rectangle : public Shape {
+public:
+    void draw() { cout &lt;&lt; "Drawing Rectangle"; }
+};
+int main() {
+    // Shape s;       // ❌ Error: Cannot create abstract class object
+    Shape* s1 = new Circle();      // ✅ Pointer to Circle
+    Shape* s2 = new Rectangle();   // ✅ Pointer to Rectangle
+    s1-&gt;draw();   // Output: Drawing Circle
+    s2-&gt;draw();   // Output: Drawing Rectangle
+    delete s1;
+    delete s2;
+}</pre>
+
+    <h3>Printer Driver Example (Real-World)</h3>
+<pre>class Printer {                          // Abstract interface
+public:
+    virtual void print(string doc) = 0;
+    virtual void showStatus() = 0;
+    virtual ~Printer() {}
+};
+class InkjetPrinter : public Printer {
+public:
+    void print(string doc) override { cout &lt;&lt; "[Inkjet] " &lt;&lt; doc; }
+    void showStatus() override { cout &lt;&lt; "Ink: 45%"; }
+};</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Pure virtual: virtual fn() = 0</span>
+      <span class="quick-item">Abstract class has at least one pure virtual</span>
+      <span class="quick-item">Cannot create abstract class object</span>
+      <span class="quick-item">All pure virtual functions must be implemented in derived</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 32 ===== -->
+<div class="lecture-card" id="lec32">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">32</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Templates in C++ – Function & Class Templates</div>
+      <div class="card-tags"><span class="tag">Templates</span><span class="tag">Generic Programming</span><span class="tag">Function Template</span><span class="tag">Class Template</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Templates</h3>
+    <div class="def"><strong>Template:</strong> A blueprint for creating generic functions or classes that work with any data type. Allows writing code ONCE and using it with multiple data types.</div>
+    <p><strong>Benefits:</strong> Reduce code duplication, improve reusability, type safety at compile time, make programs flexible.</p>
+
+    <h3>Function Template</h3>
+<pre>template &lt;typename T&gt;
+T maximum(T a, T b) {
+    return (a &gt; b) ? a : b;
+}
+int main() {
+    cout &lt;&lt; maximum(10, 20);      // int: 20
+    cout &lt;&lt; maximum(3.5, 7.2);    // double: 7.2
+    cout &lt;&lt; maximum('a', 'z');    // char: z
+}</pre>
+
+    <h3>Class Template</h3>
+<pre>template &lt;class T&gt;
+class Number {
+    T num;
+public:
+    Number(T n) : num(n) {}
+    T getNum() { return num; }
+};
+int main() {
+    Number&lt;int&gt; intNum(42);
+    Number&lt;double&gt; dblNum(9.99);
+    cout &lt;&lt; intNum.getNum();   // 42
+    cout &lt;&lt; dblNum.getNum();   // 9.99
+}</pre>
+
+    <h3>Function Template vs Class Template</h3>
+    <table>
+      <tr><th>Aspect</th><th>Function Template</th><th>Class Template</th></tr>
+      <tr><td>Purpose</td><td>Generic function logic</td><td>Generic class design</td></tr>
+      <tr><td>Syntax</td><td>template&lt;typename T&gt; T fn()</td><td>template&lt;class T&gt; class Name</td></tr>
+      <tr><td>Usage</td><td>Called like normal function</td><td>Box&lt;int&gt; b;</td></tr>
+      <tr><td>Common Use</td><td>swap, sort, compare</td><td>Stack, vector, pair</td></tr>
+    </table>
+
+    <h3>Template Specialization</h3>
+    <div class="def">Providing a custom implementation for a specific data type while the generic template handles all others.</div>
+<pre>template &lt;&gt;
+class Printer&lt;char*&gt; {     // Specialized for char*
+public:
+    void show(char* value) { cout &lt;&lt; "String: " &lt;&lt; value; }
+};</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">template&lt;typename T&gt; for generic code</span>
+      <span class="quick-item">Function template: T fn(T a, T b)</span>
+      <span class="quick-item">Class template: class Box&lt;T&gt;</span>
+      <span class="quick-item">Specialization: template&lt;&gt; class Name&lt;int&gt; { }</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 33 ===== -->
+<div class="lecture-card" id="lec33">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">33</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Exception Handling in C++</div>
+      <div class="card-tags"><span class="tag">Exception Handling</span><span class="tag">try/catch/throw</span><span class="tag">Runtime Errors</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Error vs Exception</h3>
+    <table>
+      <tr><th>Error</th><th>Exception</th></tr>
+      <tr><td>Any issue: syntax, logic, hardware</td><td>A formal language-defined object for runtime issues</td></tr>
+      <tr><td>Can be compile-time or runtime</td><td>Always runtime</td></tr>
+      <tr><td>Not necessarily catchable</td><td>"Bubbles up" the call stack until caught</td></tr>
+    </table>
+
+    <h3>Exception Handling Mechanism</h3>
+    <div class="def"><strong>Exception Handling:</strong> A mechanism to handle runtime errors gracefully without crashing the program. Uses three keywords: <code>try</code>, <code>throw</code>, and <code>catch</code>.</div>
+    <ul>
+      <li><strong>try:</strong> Block of code that might throw an exception</li>
+      <li><strong>throw:</strong> Signals/throws an exception</li>
+      <li><strong>catch:</strong> Handles the thrown exception</li>
+    </ul>
+
+    <h3>Basic Syntax & Example</h3>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int balance = 5000;
+    int amount = 7000;
+    try {
+        if (amount &gt; balance)
+            throw amount;            // Throw an int exception
+        if (amount &lt; 0)
+            throw "Invalid Amount";  // Throw a string exception
+        cout &lt;&lt; "Transaction Successful";
+    }
+    catch (int x) {
+        cout &lt;&lt; "Exception: Insufficient Balance!";
+    }
+    catch (const char* msg) {
+        cout &lt;&lt; "Exception: " &lt;&lt; msg;
+    }
+    catch (...) {   // Catch-all block
+        cout &lt;&lt; "Unknown error";
+    }
+    return 0;
+}</pre>
+<div class="output">Exception: Insufficient Balance!</div>
+
+    <h3>Common Exception Types</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>Divide by Zero</strong>int x = 5/0; — undefined behavior</div>
+      <div class="rev-item"><strong>Array Out of Bounds</strong>Accessing invalid array index</div>
+      <div class="rev-item"><strong>Memory Allocation</strong>new fails when no memory available</div>
+      <div class="rev-item"><strong>File Handling</strong>File cannot be opened or accessed</div>
+      <div class="rev-item"><strong>Invalid Input</strong>Unexpected or incorrect user input</div>
+      <div class="rev-item"><strong>Null Pointer</strong>Accessing invalid/null memory reference</div>
+    </div>
+
+    <h3>Why Exception Handling Matters</h3>
+    <ul>
+      <li>Prevents program crashes during unexpected errors</li>
+      <li>Improves software reliability and stability</li>
+      <li>Enhances user experience with meaningful error messages</li>
+      <li>Simplifies debugging and maintenance</li>
+    </ul>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">try = guarded code</span>
+      <span class="quick-item">throw = signal exception</span>
+      <span class="quick-item">catch = handle exception</span>
+      <span class="quick-item">catch(...) = catch all exceptions</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 34 ===== -->
+<div class="lecture-card" id="lec34">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">34</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Exception Specification & std::terminate()</div>
+      <div class="card-tags"><span class="tag">noexcept</span><span class="tag">std::terminate()</span><span class="tag">Exception Spec</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Exception Specification</h3>
+    <div class="def"><strong>Exception Specification:</strong> A contract that tells whether a function may throw an exception. In modern C++, this is done using <code>noexcept</code>.</div>
+
+    <h3>Old vs Modern Style</h3>
+    <table>
+      <tr><th>Style</th><th>Syntax</th><th>Status</th></tr>
+      <tr><td>Old (pre-C++11)</td><td>void fn() throw(int, char);</td><td>Deprecated (removed C++17)</td></tr>
+      <tr><td>Modern (C++11+)</td><td>void fn() noexcept;</td><td>Recommended</td></tr>
+      <tr><td>Default (may throw)</td><td>void fn() noexcept(false);</td><td>Default behavior</td></tr>
+    </table>
+
+    <h3>noexcept</h3>
+    <div class="def"><code>noexcept</code> — A promise that the function will NOT throw any exception. Allows compiler optimizations and improves performance.</div>
+<pre>void display() noexcept {
+    cout &lt;&lt; "This function never throws";
+}
+void func2() noexcept(false) {  // May throw (default behavior)
+    throw 10;
+}</pre>
+
+    <h3>std::terminate()</h3>
+    <div class="def"><strong>std::terminate():</strong> A C++ function called when exception handling cannot continue safely. Immediately stops the program.</div>
+    <p><strong>When is std::terminate() called?</strong></p>
+    <ul>
+      <li>A <code>noexcept</code> function throws an exception (violation)</li>
+      <li>An exception is thrown during stack unwinding (destructor throws)</li>
+      <li>An exception is not caught by any handler</li>
+    </ul>
+
+    <h3>noexcept Violation Example</h3>
+<pre>void show() noexcept {
+    throw 10;   // ❌ Violation! noexcept function cannot throw
+}
+int main() {
+    show();  // Calls std::terminate() → program terminates!
+}</pre>
+    <div class="warn-box">⚠️ If a destructor throws during stack unwinding (another exception already active), std::terminate() is called — two active exceptions = program death!</div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">noexcept = promise to not throw</span>
+      <span class="quick-item">noexcept violation → std::terminate()</span>
+      <span class="quick-item">Old throw() syntax removed in C++17</span>
+      <span class="quick-item">terminate() = immediate program stop</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 35 ===== -->
+<div class="lecture-card" id="lec35">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">35</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Templates, Down Casting & Cross Casting</div>
+      <div class="card-tags"><span class="tag">Upcasting</span><span class="tag">Downcasting</span><span class="tag">Cross Casting</span><span class="tag">dynamic_cast</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Upcasting (Derived → Base)</h3>
+    <div class="def"><strong>Upcasting:</strong> Converting a derived class pointer to a base class pointer. Always safe and implicit. Commonly used in runtime polymorphism.</div>
+<pre>Base* ptr = new Derived();  // ✅ Upcasting (automatic, safe)</pre>
+
+    <h3>Downcasting (Base → Derived)</h3>
+    <div class="def"><strong>Downcasting:</strong> Converting a base class pointer back to a derived class pointer. Requires explicit casting. Can be unsafe if object is not actually Derived. Use <code>dynamic_cast</code> for safety.</div>
+<pre>Base* ptr = new Derived();
+Derived* d = dynamic_cast&lt;Derived*&gt;(ptr);  // Safe downcast
+if (d != nullptr) {
+    d-&gt;derivedMethod();   // ✅ Safe to use
+}
+// If ptr actually points to a Base object:
+// dynamic_cast returns nullptr → check before use!</pre>
+
+    <h3>Cross Casting</h3>
+    <div class="def"><strong>Cross Casting:</strong> Converting a pointer from one sibling class to another sibling class through a common base class. Only possible in multiple inheritance using <code>dynamic_cast</code>.</div>
+<pre>class Animal { public: virtual void sound() {} };
+class Flyable { public: virtual void fly() { cout &lt;&lt; "Flying"; } };
+class Bird : public Animal, public Flyable {};
+
+Animal* a = new Bird();
+Flyable* f = dynamic_cast&lt;Flyable*&gt;(a);  // Cross cast!
+if (f) { f-&gt;fly(); }  // Output: Flying</pre>
+
+    <h3>Casting Summary</h3>
+    <table>
+      <tr><th>Cast Type</th><th>Direction</th><th>Safety</th><th>How</th></tr>
+      <tr><td>Upcasting</td><td>Derived → Base</td><td>✅ Always safe</td><td>Implicit (automatic)</td></tr>
+      <tr><td>Downcasting</td><td>Base → Derived</td><td>⚠️ Can fail</td><td>dynamic_cast (returns nullptr if fails)</td></tr>
+      <tr><td>Cross Casting</td><td>Sibling → Sibling</td><td>⚠️ Needs check</td><td>dynamic_cast via base (multiple inheritance)</td></tr>
+    </table>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">Upcast = safe, automatic</span>
+      <span class="quick-item">Downcast = explicit, use dynamic_cast</span>
+      <span class="quick-item">Cross cast = multiple inheritance + dynamic_cast</span>
+      <span class="quick-item">dynamic_cast returns nullptr on failure</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 36 ===== -->
+<div class="lecture-card" id="lec36">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">36</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Streams & Formatted I/O in C++</div>
+      <div class="card-tags"><span class="tag">Streams</span><span class="tag">cout</span><span class="tag">cin</span><span class="tag">Manipulators</span><span class="tag">getline</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Streams</h3>
+    <div class="def"><strong>Stream:</strong> A sequence of bytes flowing between the program and an I/O device. Acts as a communication channel.</div>
+
+    <h3>Standard Stream Objects</h3>
+    <table>
+      <tr><th>Object</th><th>Type</th><th>Purpose</th></tr>
+      <tr><td>cin</td><td>Input</td><td>Standard input (keyboard)</td></tr>
+      <tr><td>cout</td><td>Output</td><td>Standard output (screen)</td></tr>
+      <tr><td>cerr</td><td>Error</td><td>Unbuffered error output</td></tr>
+      <tr><td>clog</td><td>Log</td><td>Buffered error output</td></tr>
+    </table>
+
+    <h3>Formatted I/O Functions (ios class)</h3>
+    <table>
+      <tr><th>Function</th><th>Purpose</th><th>Example</th></tr>
+      <tr><td>width(n)</td><td>Minimum field width (resets after one use)</td><td>cout.width(10);</td></tr>
+      <tr><td>fill(ch)</td><td>Fill character for empty spaces (persists)</td><td>cout.fill('*');</td></tr>
+      <tr><td>precision(n)</td><td>Number of decimal digits</td><td>cout.precision(4);</td></tr>
+      <tr><td>setf(flag)</td><td>Set format flags</td><td>cout.setf(ios::scientific);</td></tr>
+      <tr><td>peek()</td><td>Look at next char without extracting</td><td>cin.peek()</td></tr>
+      <tr><td>ignore(n)</td><td>Skip n characters from input</td><td>cin.ignore(100,'\n');</td></tr>
+      <tr><td>putback(ch)</td><td>Return char to input stream</td><td>cin.putback(ch);</td></tr>
+    </table>
+
+    <h3>Manipulators (from &lt;iomanip&gt;)</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>setw(n)</strong>Sets field width for next output only.</div>
+      <div class="rev-item"><strong>setprecision(n)</strong>Controls decimal digits.</div>
+      <div class="rev-item"><strong>fixed</strong>Displays in fixed-point notation.</div>
+      <div class="rev-item"><strong>setfill(c)</strong>Fills empty spaces with character c.</div>
+      <div class="rev-item"><strong>left / right</strong>Aligns output left or right.</div>
+      <div class="rev-item"><strong>endl</strong>New line + flushes buffer.</div>
+    </div>
+
+    <h3>Formatting Example</h3>
+<pre>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+using namespace std;
+int main() {
+    cout.width(10); cout.fill('*');
+    cout &lt;&lt; 525 &lt;&lt; "\n";       // Output: *******525
+    cout &lt;&lt; setw(10) &lt;&lt; "Name" &lt;&lt; setw(10) &lt;&lt; "Marks" &lt;&lt; endl;
+    cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; 12.3456;  // Output: 12.35
+    cout.precision(4);
+    cout &lt;&lt; sqrt(2) &lt;&lt; "\n";   // Output: 1.414
+}</pre>
+
+    <h3>getline() vs cin</h3>
+    <div class="def"><code>cin &gt;&gt;</code> stops at whitespace. <code>getline(cin, str)</code> reads the entire line including spaces. Use getline() when input contains spaces.</div>
+<pre>string fullName;
+getline(cin, fullName);  // Reads "John Doe" completely
+// cin >> fullName  would only read "John"</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">width() resets after each use; fill() persists</span>
+      <span class="quick-item">setw from &lt;iomanip&gt;</span>
+      <span class="quick-item">getline reads spaces; cin >> doesn't</span>
+      <span class="quick-item">fixed + setprecision = controlled decimals</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 38 ===== -->
+<div class="lecture-card" id="lec38">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">38</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Object Serialization in C++</div>
+      <div class="card-tags"><span class="tag">Serialization</span><span class="tag">Deserialization</span><span class="tag">File Handling</span><span class="tag">ofstream/ifstream</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>The Problem</h3>
+    <p>Objects exist only in RAM during program execution. When the program ends, all object data is lost permanently. Users must re-enter data every time.</p>
+
+    <h3>Object Serialization</h3>
+    <div class="def"><strong>Object Serialization:</strong> The process of converting an object's state (data) into a format that can be stored permanently in a file or transmitted over a network.</div>
+    <div class="def"><strong>Deserialization:</strong> The reverse process — reading stored data from a file and reconstructing the original object.</div>
+
+    <h3>Types of Serialization</h3>
+    <table>
+      <tr><th>Type</th><th>Storage</th><th>Advantage</th><th>Disadvantage</th></tr>
+      <tr><td>Text Serialization</td><td>Human-readable text</td><td>Easy to read and edit</td><td>Slower, larger files</td></tr>
+      <tr><td>Binary Serialization</td><td>Binary format</td><td>Faster, compact</td><td>Not human-readable</td></tr>
+    </table>
+
+    <h3>Complete Example</h3>
+<pre>#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Student {
+    int roll;
+    string name;
+    float marks;
+public:
+    void input() {
+        cout &lt;&lt; "Enter Roll: "; cin &gt;&gt; roll;
+        cin.ignore();
+        cout &lt;&lt; "Enter Name: "; getline(cin, name);
+        cout &lt;&lt; "Enter Marks: "; cin &gt;&gt; marks;
+    }
+    void save() {  // Serialize to file
+        ofstream fout("student.txt");
+        fout &lt;&lt; roll &lt;&lt; endl &lt;&lt; name &lt;&lt; endl &lt;&lt; marks &lt;&lt; endl;
+        fout.close();
+    }
+    void load() {  // Deserialize from file
+        ifstream fin("student.txt");
+        fin &gt;&gt; roll; fin.ignore();
+        getline(fin, name);
+        fin &gt;&gt; marks;
+        fin.close();
+    }
+    void display() { cout &lt;&lt; roll &lt;&lt; " " &lt;&lt; name &lt;&lt; " " &lt;&lt; marks; }
+};
+int main() {
+    Student s1, s2;
+    s1.input();
+    s1.save();   // Save to file
+    s2.load();   // Load from file
+    s2.display(); // Same data as s1!
+}</pre>
+
+    <h3>Real-World Applications</h3>
+    <div class="quick">
+      <span class="quick-item">Banking: Customer account details</span>
+      <span class="quick-item">Online Games: Save progress</span>
+      <span class="quick-item">Shopping Apps: Cart items</span>
+      <span class="quick-item">Student Systems: Student records</span>
+    </div>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">ofstream = write to file (serialize)</span>
+      <span class="quick-item">ifstream = read from file (deserialize)</span>
+      <span class="quick-item">fstream = both read and write</span>
+      <span class="quick-item">Always call .close() after file operations</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 39 ===== -->
+<div class="lecture-card" id="lec39">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">39</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Random Access File Handling</div>
+      <div class="card-tags"><span class="tag">seekg/seekp</span><span class="tag">tellg/tellp</span><span class="tag">Random Access</span><span class="tag">Binary Files</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Sequential vs Random Access</h3>
+    <table>
+      <tr><th>Feature</th><th>Sequential Access</th><th>Random Access</th></tr>
+      <tr><td>Method</td><td>Reads data in order</td><td>Jumps to any position</td></tr>
+      <tr><td>Speed</td><td>Slower for large files</td><td>Faster for specific records</td></tr>
+      <tr><td>Pointer control</td><td>Automatic</td><td>seekg()/seekp()</td></tr>
+      <tr><td>Best use</td><td>Text files, logs</td><td>Binary files, fixed-size records</td></tr>
+    </table>
+
+    <h3>File Pointer Functions</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>seekg(pos)</strong>Moves GET (read) pointer to given position.</div>
+      <div class="rev-item"><strong>seekp(pos)</strong>Moves PUT (write) pointer to given position.</div>
+      <div class="rev-item"><strong>tellg()</strong>Returns current GET pointer position.</div>
+      <div class="rev-item"><strong>tellp()</strong>Returns current PUT pointer position.</div>
+    </div>
+
+    <h3>Seek Modes</h3>
+    <ul>
+      <li><code>ios::beg</code> – From beginning of file</li>
+      <li><code>ios::cur</code> – From current position</li>
+      <li><code>ios::end</code> – From end of file</li>
+    </ul>
+
+    <h3>Example: Reading Specific Record</h3>
+<pre>struct Student {
+    int roll;
+    char name[20];
+};
+int main() {
+    Student s;
+    ifstream fin("student.dat", ios::binary);
+    int recordNo = 3;  // Want to read 3rd record
+    fin.seekg((recordNo - 1) * sizeof(Student), ios::beg);
+    fin.read((char*)&amp;s, sizeof(Student));
+    cout &lt;&lt; s.roll &lt;&lt; " " &lt;&lt; s.name;
+    fin.close();
+}</pre>
+
+    <h3>Use Cases</h3>
+    <ul>
+      <li>Student records, banking records, employee databases</li>
+      <li>Quickly search or modify a specific record without reading whole file</li>
+    </ul>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">seekg = read pointer; seekp = write pointer</span>
+      <span class="quick-item">tellg/tellp = current position</span>
+      <span class="quick-item">Record n offset = (n-1) * sizeof(Record)</span>
+      <span class="quick-item">ios::beg, ios::cur, ios::end = seek modes</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE 40 ===== -->
+<div class="lecture-card" id="lec40">
+  <div class="card-header" onclick="toggleCard(this)">
+    <div class="card-num">40</div>
+    <div class="card-title-wrap">
+      <div class="card-title">C++ Libraries & Modern Features (STL)</div>
+      <div class="card-tags"><span class="tag">STL</span><span class="tag">vector</span><span class="tag">map</span><span class="tag">Lambda</span><span class="tag">auto</span></div>
+    </div>
+    <div class="card-chevron">▼</div>
+  </div>
+  <div class="card-body">
+    <h3>Standard Template Library (STL)</h3>
+    <div class="def"><strong>STL:</strong> A collection of generic classes and functions providing ready-to-use data structures and algorithms. Part of C++ Standard Library.</div>
+
+    <h3>STL Components</h3>
+    <div class="rev-grid">
+      <div class="rev-item"><strong>Containers</strong>Store data: vector, list, map, set, stack, queue</div>
+      <div class="rev-item"><strong>Algorithms</strong>Operations on data: sort, find, reverse, count</div>
+      <div class="rev-item"><strong>Iterators</strong>Pointer-like objects to traverse containers</div>
+    </div>
+
+    <h3>Common Containers</h3>
+    <table>
+      <tr><th>Container</th><th>Type</th><th>Key Feature</th></tr>
+      <tr><td>vector&lt;T&gt;</td><td>Dynamic array</td><td>Random access, dynamic sizing</td></tr>
+      <tr><td>list&lt;T&gt;</td><td>Doubly linked list</td><td>Fast insert/delete anywhere</td></tr>
+      <tr><td>stack&lt;T&gt;</td><td>LIFO stack</td><td>push(), pop(), top()</td></tr>
+      <tr><td>queue&lt;T&gt;</td><td>FIFO queue</td><td>push(), pop(), front()</td></tr>
+      <tr><td>map&lt;K,V&gt;</td><td>Key-value pairs</td><td>Sorted keys, fast lookup</td></tr>
+      <tr><td>set&lt;T&gt;</td><td>Unique sorted elements</td><td>No duplicates</td></tr>
+    </table>
+
+    <h3>vector Example</h3>
+<pre>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+int main() {
+    vector&lt;int&gt; v = {5, 3, 1, 4, 2};
+    sort(v.begin(), v.end());          // Sort
+    for (int x : v) cout &lt;&lt; x &lt;&lt; " "; // Output: 1 2 3 4 5
+    v.push_back(6);                    // Add to end
+    v.pop_back();                      // Remove from end
+    cout &lt;&lt; v.size();                  // Number of elements
+}</pre>
+
+    <h3>Modern C++ Features</h3>
+    <ul>
+      <li><strong>auto:</strong> Type inference – compiler deduces the type automatically</li>
+      <li><strong>Range-based for loop:</strong> <code>for (auto x : container) { }</code></li>
+      <li><strong>Lambda expressions:</strong> Anonymous inline functions</li>
+      <li><strong>nullptr:</strong> Type-safe null pointer (replaces NULL)</li>
+      <li><strong>smart pointers:</strong> unique_ptr, shared_ptr – automatic memory management</li>
+    </ul>
+
+    <h3>Lambda Example</h3>
+<pre>auto add = [](int a, int b) { return a + b; };
+cout &lt;&lt; add(3, 5);  // Output: 8
+
+// Sort with lambda
+sort(v.begin(), v.end(), [](int a, int b) { return a &gt; b; }); // Descending</pre>
+
+    <h3>One-Line Revision Notes</h3>
+    <div class="quick">
+      <span class="quick-item">vector = dynamic array</span>
+      <span class="quick-item">map = sorted key-value store</span>
+      <span class="quick-item">auto = compiler deduces type</span>
+      <span class="quick-item">Lambda = [capture](params) { body }</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MASTER REVISION SHEET -->
+<!-- ============================================================ -->
+<div class="section-header" id="master">⭐ Master Revision Sheet</div>
+<div class="master-card">
+  <h2><span class="icon">📖</span>Important Definitions from All PPTs</h2>
+  <div class="rev-grid">
+    <div class="rev-item"><strong>OOP</strong>Programming paradigm organized around objects (data), not functions.</div>
+    <div class="rev-item"><strong>Class</strong>User-defined blueprint; no memory allocated at definition.</div>
+    <div class="rev-item"><strong>Object</strong>Instance of a class; memory allocated at creation.</div>
+    <div class="rev-item"><strong>Encapsulation</strong>Wrapping data + functions in a class; private data + public methods.</div>
+    <div class="rev-item"><strong>Abstraction</strong>Hiding complexity; showing only essential features.</div>
+    <div class="rev-item"><strong>Inheritance</strong>Child class acquires properties of parent class (code reuse).</div>
+    <div class="rev-item"><strong>Polymorphism</strong>"Many forms" — same name, different behaviors.</div>
+    <div class="rev-item"><strong>Constructor</strong>Special function (same name, no return type) called on object creation.</div>
+    <div class="rev-item"><strong>Destructor</strong>~ClassName() — called when object goes out of scope; releases resources.</div>
+    <div class="rev-item"><strong>Virtual Function</strong>Enables runtime polymorphism; function resolved at runtime via VTable.</div>
+    <div class="rev-item"><strong>Pure Virtual</strong>virtual fn() = 0 — forces derived class to implement it; makes class abstract.</div>
+    <div class="rev-item"><strong>Abstract Class</strong>Has at least one pure virtual function; cannot be instantiated.</div>
+    <div class="rev-item"><strong>Template</strong>Generic blueprint for function/class that works with any data type.</div>
+    <div class="rev-item"><strong>Exception</strong>Runtime object that "bubbles up" the call stack until caught.</div>
+    <div class="rev-item"><strong>Friend Function</strong>Non-member function with access to private/protected members.</div>
+    <div class="rev-item"><strong>noexcept</strong>Guarantees a function will not throw exceptions.</div>
+    <div class="rev-item"><strong>Serialization</strong>Converting object state to storable format (file/network).</div>
+    <div class="rev-item"><strong>static member</strong>Class-level variable/function shared by all objects.</div>
+  </div>
+</div>
+
+<div class="master-card">
+  <h2><span class="icon">⚠️</span>Frequently Confused Topics</h2>
+  <table>
+    <tr><th>Topic A</th><th>vs</th><th>Topic B</th></tr>
+    <tr><td>Abstraction (hide complexity, design)</td><td>vs</td><td>Encapsulation (protect data, implementation)</td></tr>
+    <tr><td>Function Overloading (same class, different params)</td><td>vs</td><td>Function Overriding (derived class, same params + virtual)</td></tr>
+    <tr><td>Shallow Copy (same pointer)</td><td>vs</td><td>Deep Copy (own separate memory)</td></tr>
+    <tr><td>Compile-time Polymorphism (overloading)</td><td>vs</td><td>Runtime Polymorphism (virtual functions)</td></tr>
+    <tr><td>public inheritance (IS-A)</td><td>vs</td><td>private inheritance (HAS-A)</td></tr>
+    <tr><td>Upcasting (automatic, safe)</td><td>vs</td><td>Downcasting (explicit, may fail)</td></tr>
+    <tr><td>class (no memory)</td><td>vs</td><td>object (memory allocated)</td></tr>
+    <tr><td>width() (resets after one use)</td><td>vs</td><td>fill() (persists until changed)</td></tr>
+    <tr><td>cin >> (stops at whitespace)</td><td>vs</td><td>getline() (reads full line with spaces)</td></tr>
+    <tr><td>Constructor (called on creation)</td><td>vs</td><td>Destructor (called on scope exit)</td></tr>
+  </table>
+</div>
+
+<div class="master-card">
+  <h2><span class="icon">🚫</span>Common Mistakes Students Make</h2>
+  <ul>
+    <li>Adding a return type to constructor or destructor → ❌ Error</li>
+    <li>Forgetting <code>= 0</code> for pure virtual function → becomes regular virtual</li>
+    <li>Trying to create an object of an abstract class → ❌ Compile error</li>
+    <li>Not using <code>virtual</code> in base class destructor when using polymorphism → Memory leak</li>
+    <li>Forgetting to define static member outside class: <code>int ClassName::var = 0;</code></li>
+    <li>Using <code>cin >></code> for strings with spaces instead of <code>getline()</code></li>
+    <li>Forgetting <code>delete</code> after <code>new</code> → Memory leak</li>
+    <li>Not checking if <code>dynamic_cast</code> returns nullptr before dereferencing</li>
+    <li>Overloading operators that cannot be overloaded (., ::, .*, ?:, sizeof)</li>
+    <li>Declaring constructor without same name as class</li>
+    <li>Accessing private base class members in derived class → ❌ Error</li>
+    <li>Integer division: <code>5/2 = 2</code> not 2.5 → use static_cast</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- LAST MINUTE REVISION -->
+<!-- ============================================================ -->
+<div class="section-header" id="lastmin">⚡ Last-Minute Revision Notes</div>
+<div class="master-card">
+  <h2><span class="icon">⚡</span>Ultra-Short Revision – Under 30 Minutes</h2>
+  <div class="rev-grid">
+    <div class="rev-item"><strong>OOP 4 Pillars</strong>Encapsulation, Abstraction, Inheritance, Polymorphism</div>
+    <div class="rev-item"><strong>Class vs Object</strong>Class = blueprint (no memory). Object = instance (memory allocated).</div>
+    <div class="rev-item"><strong>Access Specifiers</strong>public=everywhere, protected=class+derived, private=class only</div>
+    <div class="rev-item"><strong>Constructor</strong>Same name, no return type, auto-called on creation</div>
+    <div class="rev-item"><strong>Destructor</strong>~ClassName(), no params/overload, auto-called on scope exit</div>
+    <div class="rev-item"><strong>Copy Constructor</strong>ClassName(const ClassName &amp;obj) — deep copy for pointer members</div>
+    <div class="rev-item"><strong>static member</strong>Shared by all objects; defined outside class; accessed as Class::var</div>
+    <div class="rev-item"><strong>Friend Function</strong>Non-member, has private access, not inherited</div>
+    <div class="rev-item"><strong>Inheritance Syntax</strong>class Derived : access Base { }</div>
+    <div class="rev-item"><strong>Inheritance Types</strong>Single, Multiple, Multilevel, Hierarchical, Hybrid</div>
+    <div class="rev-item"><strong>Public Inheritance</strong>IS-A. Public stays public. Most common type.</div>
+    <div class="rev-item"><strong>Private Inheritance</strong>HAS-A. Everything becomes private.</div>
+    <div class="rev-item"><strong>Virtual Function</strong>virtual fn() — runtime binding; VTable lookup</div>
+    <div class="rev-item"><strong>Pure Virtual</strong>virtual fn() = 0 — must implement in derived</div>
+    <div class="rev-item"><strong>Abstract Class</strong>Has pure virtual → cannot instantiate; use as interface</div>
+    <div class="rev-item"><strong>Override keyword</strong>Confirms function is overriding base virtual function</div>
+    <div class="rev-item"><strong>Function Overloading</strong>Same name, different params. Compile-time poly.</div>
+    <div class="rev-item"><strong>Function Overriding</strong>Same signature in derived + virtual. Runtime poly.</div>
+    <div class="rev-item"><strong>Op. Overloading</strong>Extend operators for user types; compile-time poly</div>
+    <div class="rev-item"><strong>Cannot Overload</strong>. :: .* ?: sizeof</div>
+    <div class="rev-item"><strong>Template</strong>template&lt;typename T&gt; — generic code for any type</div>
+    <div class="rev-item"><strong>Exception Handling</strong>try{} throw; catch{} — handle runtime errors gracefully</div>
+    <div class="rev-item"><strong>noexcept</strong>Guarantees no throw. Violation → std::terminate()</div>
+    <div class="rev-item"><strong>Upcasting</strong>Derived* → Base* (automatic, safe)</div>
+    <div class="rev-item"><strong>Downcasting</strong>Base* → Derived* (dynamic_cast, check nullptr)</div>
+    <div class="rev-item"><strong>Cross Casting</strong>Sibling to sibling via base (multiple inheritance + dynamic_cast)</div>
+    <div class="rev-item"><strong>Serialization</strong>Object → file (ofstream). Deserialization = file → object (ifstream)</div>
+    <div class="rev-item"><strong>Random Access</strong>seekg(read), seekp(write), tellg, tellp, ios::beg/cur/end</div>
+    <div class="rev-item"><strong>Streams</strong>cin(in), cout(out), cerr(error), clog(buffered error)</div>
+    <div class="rev-item"><strong>Manipulators</strong>setw(n), setprecision(n), fixed, setfill(c), left, right</div>
+    <div class="rev-item"><strong>getline</strong>Reads full line with spaces. cin>> stops at space.</div>
+    <div class="rev-item"><strong>static_cast</strong>Safe compile-time cast (numeric, upcast)</div>
+    <div class="rev-item"><strong>dynamic_cast</strong>Safe runtime cast (polymorphism, returns nullptr if fails)</div>
+    <div class="rev-item"><strong>explicit</strong>Prevents implicit conversion in single-param constructors</div>
+    <div class="rev-item"><strong>const Object</strong>Cannot modify data. Can only call const functions.</div>
+    <div class="rev-item"><strong>const Function</strong>void fn() const — cannot modify data members</div>
+    <div class="rev-item"><strong>new/delete</strong>new = heap alloc. delete = free. new[] → delete[]</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CHEAT SHEET -->
+<!-- ============================================================ -->
+<div class="section-header" id="cheat">📋 Cheat Sheet</div>
+<div class="master-card">
+  <h2><span class="icon">📋</span>Key Syntax Reference</h2>
+  <table class="cheat-table">
+    <tr><th>Concept</th><th>Syntax</th></tr>
+    <tr><td>Class definition</td><td><code>class Name { public: int x; void fn(); };</code></td></tr>
+    <tr><td>Object creation</td><td><code>Name obj; // or Name* p = new Name();</code></td></tr>
+    <tr><td>Default constructor</td><td><code>ClassName() { }</code></td></tr>
+    <tr><td>Parameterized constructor</td><td><code>ClassName(int a, int b) { x=a; y=b; }</code></td></tr>
+    <tr><td>Copy constructor</td><td><code>ClassName(const ClassName &amp;obj) { x=obj.x; }</code></td></tr>
+    <tr><td>Destructor</td><td><code>~ClassName() { delete ptr; }</code></td></tr>
+    <tr><td>Explicit constructor</td><td><code>explicit ClassName(int x) { }</code></td></tr>
+    <tr><td>Static member definition</td><td><code>int ClassName::staticVar = 0;</code></td></tr>
+    <tr><td>Const function</td><td><code>void display() const { }</code></td></tr>
+    <tr><td>Inheritance</td><td><code>class Derived : public Base { };</code></td></tr>
+    <tr><td>Virtual function</td><td><code>virtual void fn() { }</code></td></tr>
+    <tr><td>Pure virtual function</td><td><code>virtual void fn() = 0;</code></td></tr>
+    <tr><td>Override</td><td><code>void fn() override { }</code></td></tr>
+    <tr><td>Virtual destructor</td><td><code>virtual ~Base() { }</code></td></tr>
+    <tr><td>Friend function</td><td><code>friend void fn(ClassName obj);</code></td></tr>
+    <tr><td>Operator overload</td><td><code>Type operator+(Type b) { }</code></td></tr>
+    <tr><td>Function template</td><td><code>template&lt;typename T&gt; T fn(T a, T b) { }</code></td></tr>
+    <tr><td>Class template</td><td><code>template&lt;class T&gt; class Box { T val; };</code></td></tr>
+    <tr><td>Template instantiation</td><td><code>Box&lt;int&gt; b; fn(5, 10);</code></td></tr>
+    <tr><td>Try-catch-throw</td><td><code>try { throw val; } catch(type e) { }</code></td></tr>
+    <tr><td>noexcept</td><td><code>void fn() noexcept { }</code></td></tr>
+    <tr><td>dynamic_cast</td><td><code>Derived* d = dynamic_cast&lt;Derived*&gt;(basePtr);</code></td></tr>
+    <tr><td>static_cast</td><td><code>double x = static_cast&lt;double&gt;(intVal);</code></td></tr>
+    <tr><td>File write</td><td><code>ofstream fout("file.txt"); fout &lt;&lt; data; fout.close();</code></td></tr>
+    <tr><td>File read</td><td><code>ifstream fin("file.txt"); fin &gt;&gt; data; fin.close();</code></td></tr>
+    <tr><td>seekg</td><td><code>fin.seekg((n-1)*sizeof(Record), ios::beg);</code></td></tr>
+    <tr><td>Lambda</td><td><code>auto fn = [](int a, int b) { return a+b; };</code></td></tr>
+    <tr><td>Range-for</td><td><code>for (auto x : container) { }</code></td></tr>
+    <tr><td>Vector</td><td><code>vector&lt;int&gt; v; v.push_back(5); v.pop_back();</code></td></tr>
+    <tr><td>Dynamic memory</td><td><code>int* p = new int; delete p; int* arr = new int[n]; delete[] arr;</code></td></tr>
+    <tr><td>Catch-all</td><td><code>catch(...) { /* handle any exception */ }</code></td></tr>
+    <tr><td>Formatted output</td><td><code>cout &lt;&lt; setw(10) &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; val;</code></td></tr>
+    <tr><td>getline</td><td><code>getline(cin, strVariable);</code></td></tr>
+    <tr><td>Namespace</td><td><code>using namespace std; // or std::cout</code></td></tr>
+  </table>
+</div>
+
+<div class="master-card">
+  <h2><span class="icon">🧠</span>Memory Tricks</h2>
+  <div class="rev-grid">
+    <div class="rev-item"><strong>APIE = 4 OOP Pillars</strong>Abstraction, Polymorphism, Inheritance, Encapsulation</div>
+    <div class="rev-item"><strong>try-throw-catch = TTC</strong>Try it, Throw it, Catch it (like a ball)</div>
+    <div class="rev-item"><strong>Constructor vs Destructor</strong>Constructor = Birthday 🎂 (born → created); Destructor = Death 💀 (scope ends → cleanup)</div>
+    <div class="rev-item"><strong>static = SOCS</strong>Shared by all Objects in the Class, one Shared copy</div>
+    <div class="rev-item"><strong>public IS-A, private HAS-A</strong>public inheritance = IS-A (Dog IS-A Animal); private = HAS-A</div>
+    <div class="rev-item"><strong>seekg vs seekp</strong>g = Get (read), p = Put (write). "Get and Put"</div>
+    <div class="rev-item"><strong>new/delete pairing</strong>Every new has a delete. Every new[] has a delete[]</div>
+    <div class="rev-item"><strong>noexcept violation</strong>noexcept + throw = TERMINATE. No exceptions allowed = program dies if you try</div>
+    <div class="rev-item"><strong>virtual = VTable</strong>Virtual function → VTable lookup at runtime → correct function called</div>
+    <div class="rev-item"><strong>Abstract = Cannot</strong>Abstract class CANNOT be instantiated (has at least one pure virtual)</div>
+  </div>
+</div>
+
+<div class="master-card">
+  <h2><span class="icon">📊</span>Quick Comparison Tables</h2>
+  
+  <p><strong>Constructor Types:</strong></p>
+  <table>
+    <tr><th>Type</th><th>Params</th><th>Calls when</th></tr>
+    <tr><td>Default</td><td>None</td><td>ClassName obj;</td></tr>
+    <tr><td>Parameterized</td><td>User params</td><td>ClassName obj(a, b);</td></tr>
+    <tr><td>Copy</td><td>const ClassName&</td><td>ClassName obj2 = obj1;</td></tr>
+  </table>
+
+  <p style="margin-top:14px"><strong>Inheritance Access Matrix:</strong></p>
+  <table>
+    <tr><th>Member</th><th>: public</th><th>: protected</th><th>: private</th></tr>
+    <tr><td>public</td><td>public</td><td>protected</td><td>private</td></tr>
+    <tr><td>protected</td><td>protected</td><td>protected</td><td>private</td></tr>
+    <tr><td>private</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+  </table>
+
+  <p style="margin-top:14px"><strong>Cast Operators:</strong></p>
+  <table>
+    <tr><th>Cast</th><th>Use Case</th><th>Safety</th></tr>
+    <tr><td>static_cast</td><td>Numeric conversions, upcasting</td><td>Compile-time check</td></tr>
+    <tr><td>dynamic_cast</td><td>Downcasting with polymorphism</td><td>Runtime check (nullptr on fail)</td></tr>
+    <tr><td>const_cast</td><td>Remove/add const qualifier</td><td>Risky if original was const</td></tr>
+    <tr><td>reinterpret_cast</td><td>Unrelated pointer types</td><td>Dangerous – avoid unless necessary</td></tr>
+  </table>
+</div>
+
+</main>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Dark mode
+let isDark = false;
+function toggleDark() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '');
+  document.querySelector('.dark-toggle').textContent = isDark ? '☀️ Light' : '🌙 Dark';
+}
+
+// Card toggle
+function toggleCard(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// Back to top
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backTop');
+  btn.classList.toggle('show', window.scrollY > 400);
+});
+
+// Search
+function searchNotes(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('.lecture-card, .master-card');
+  const mainContent = document.getElementById('mainContent');
+  let noResultDiv = document.getElementById('noResult');
+  let found = 0;
+
+  if (!q) {
+    cards.forEach(card => { card.style.display = ''; });
+    if (noResultDiv) noResultDiv.style.display = 'none';
+    clearHighlights();
+    return;
+  }
+
+  clearHighlights();
+
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    if (text.includes(q)) {
+      card.style.display = '';
+      found++;
+      // Open cards that match
+      const header = card.querySelector('.card-header');
+      const body = card.querySelector('.card-body');
+      if (header && body) {
+        header.classList.add('open');
+        body.classList.add('open');
+      }
+      // Highlight
+      highlightText(card, q);
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  if (!noResultDiv) {
+    noResultDiv = document.createElement('div');
+    noResultDiv.id = 'noResult';
+    noResultDiv.className = 'no-result';
+    mainContent.appendChild(noResultDiv);
+  }
+  noResultDiv.textContent = found === 0 ? `No results found for "${query}"` : '';
+  noResultDiv.style.display = found === 0 ? 'block' : 'none';
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.highlight').forEach(el => {
+    el.replaceWith(document.createTextNode(el.textContent));
+  });
+}
+
+function highlightText(node, query) {
+  if (node.nodeType === 3) { // Text node
+    const text = node.textContent;
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf(query);
+    if (idx === -1) return;
+    const span = document.createElement('span');
+    span.innerHTML = 
+      escapeHtml(text.substring(0, idx)) +
+      '<span class="highlight">' + escapeHtml(text.substring(idx, idx + query.length)) + '</span>' +
+      escapeHtml(text.substring(idx + query.length));
+    node.replaceWith(span);
+  } else if (node.nodeType === 1 && !['SCRIPT','STYLE','PRE'].includes(node.tagName)) {
+    Array.from(node.childNodes).forEach(child => highlightText(child, query));
+  }
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Open first card by default
+document.addEventListener('DOMContentLoaded', () => {
+  const firstHeader = document.querySelector('.card-header');
+  if (firstHeader) {
+    firstHeader.classList.add('open');
+    firstHeader.nextElementSibling.classList.add('open');
+  }
+});
+</script>
+</body>
+</html>
